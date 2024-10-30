@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  nest:
+    image: mmayss/dajaj_server:master
+    container_name: nest
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  web:
+    image: mmayss/dajaj_web:master
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4200:80"
+    depends_on:
+      - nest
