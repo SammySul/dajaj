@@ -7,6 +7,6 @@ async function bootstrap() {
     origin: process.env['WEB_BASE_URL'],
   });
   app.setGlobalPrefix('api');
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();
