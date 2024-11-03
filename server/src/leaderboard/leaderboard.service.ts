@@ -6,7 +6,6 @@ import { AxiosError } from 'axios';
 import { Cache } from 'cache-manager';
 import {
   catchError,
-  firstValueFrom,
   from,
   map,
   Observable,
@@ -29,46 +28,51 @@ export class LeaderboardService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async fetchLeaderboard$(playerNames: string[]) {
-    const players = await firstValueFrom(this.fetchPlayers$(playerNames));
-    const playersWithMatchIds = players.data.map((player) => ({
-      playerId: player.id,
-      playerName: player.attributes.name,
-      matches: player.relationships.matches.data.map((match) => match.id),
-    }));
-
-    const playersWithMatches = await Promise.all(
-      playersWithMatchIds.map(async (player) => {
-        return await firstValueFrom(
-          this.fetchMatches$(player.matches).pipe(
-            map((matches) => ({
-              playerId: player.playerId,
-              playerName: player.playerName,
-              matches: matches.filter((match) =>
-                this.doesMatchContainPlayers(
-                  match,
-                  players.data.map((p) => p.id),
+  fetchLeaderboard$(playerNames: string[]): Observable<
+    {
+      playerId: string;
+      playerName: string;
+      matches: MatchResponseDto[];
+    }[]
+  > {
+    return this.fetchPlayers$(playerNames).pipe(
+      switchMap((players) => {
+        const playersWithMatchIds = players.data.map((player) => ({
+          playerId: player.id,
+          playerName: player.attributes.name,
+          matches: player.relationships.matches.data.map((match) => match.id),
+        }));
+        return zip(
+          playersWithMatchIds.map((player) => {
+            return this.fetchMatches$(player.matches).pipe(
+              map((matches) => ({
+                playerId: player.playerId,
+                playerName: player.playerName,
+                matches: matches.filter((match) =>
+                  this.doesMatchContainPlayers(
+                    match,
+                    players.data.map((p) => p.id),
+                  ),
                 ),
-              ),
-            })),
-          ),
+              })),
+            );
+          }),
         );
       }),
     );
-
-    return playersWithMatches;
   }
 
   private doesMatchContainPlayers(
     match: MatchResponseDto,
     playerIds: string[],
   ): boolean {
-    return playerIds.every((playerId) => {
-      return match.included.some((included) => {
-        if (included.type !== 'participant') return false;
-        return included.attributes.stats.playerId === playerId;
-      });
-    });
+    return playerIds.every((playerId) =>
+      match.included.some(
+        (included) =>
+          included.type === 'participant' &&
+          included.attributes.stats.playerId === playerId,
+      ),
+    );
   }
 
   private fetchPlayers$(playerNames: string[]): Observable<PlayerResponseDto> {
