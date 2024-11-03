@@ -14,8 +14,13 @@ import {
   tap,
   zip,
 } from 'rxjs';
-import { PUBG_API_URL } from './leaderboard.consts';
-import { MatchResponseDto, PlayerResponseDto } from './leaderboard.model';
+import { PUBG_ACCEPT_HEADER, PUBG_API_URL } from './leaderboard.consts';
+import {
+  LeaderboardDto,
+  MatchResponseDto,
+  PlayerResponseDto,
+} from './leaderboard.model';
+import { LeaderboardMapper } from './leaderboard.mapper';
 
 @Injectable()
 export class LeaderboardService {
@@ -28,7 +33,13 @@ export class LeaderboardService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  fetchLeaderboard$(playerNames: string[]): Observable<
+  fetchLeaderboard$(playerNames: string[]): Observable<LeaderboardDto[]> {
+    return this.fetchPlayersWithMathes$(playerNames).pipe(
+      map((players) => players.map(LeaderboardMapper.toLeaderboardDto)),
+    );
+  }
+
+  private fetchPlayersWithMathes$(playerNames: string[]): Observable<
     {
       playerId: string;
       playerName: string;
@@ -83,23 +94,33 @@ export class LeaderboardService {
       switchMap((cachedPlayers) => {
         if (!!cachedPlayers)
           return of(cachedPlayers).pipe(
-            tap(() => console.log('Cache hit, fetching from cache')),
+            tap(() =>
+              Logger.debug(
+                'Cache hit, fetching from cache',
+                LeaderboardService.name,
+              ),
+            ),
           );
         else {
           {
             return this.httpService
               .get<PlayerResponseDto>(url, {
                 headers: {
-                  Accept: 'application/vnd.api+json',
+                  Accept: PUBG_ACCEPT_HEADER,
                   Authorization: `Bearer ${this.apiKey}`,
                 },
               })
               .pipe(
                 map((response) => response.data),
-                tap(() => console.log('Cache miss, fetching from API')),
+                tap(() =>
+                  Logger.debug(
+                    'Cache miss, fetching from API',
+                    LeaderboardService.name,
+                  ),
+                ),
                 tap(
                   async (data) =>
-                    await this.cacheManager.set('players', data, 5 * 60 * 1000),
+                    await this.cacheManager.set('players', data, 3600),
                 ),
                 catchError((error: AxiosError) => {
                   Logger.error(
@@ -130,7 +151,7 @@ export class LeaderboardService {
     return this.httpService
       .get<MatchResponseDto>(url, {
         headers: {
-          Accept: 'application/vnd.api+json',
+          Accept: PUBG_ACCEPT_HEADER,
         },
       })
       .pipe(
