@@ -4,7 +4,17 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { Cache } from 'cache-manager';
-import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  zip,
+} from 'rxjs';
 import { PUBG_API_URL } from './leaderboard.consts';
 import { MatchResponseDto, PlayerResponseDto } from './leaderboard.model';
 
@@ -18,6 +28,48 @@ export class LeaderboardService {
     private readonly configService: ConfigService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  async fetchLeaderboard$(playerNames: string[]) {
+    const players = await firstValueFrom(this.fetchPlayers$(playerNames));
+    const playersWithMatchIds = players.data.map((player) => ({
+      playerId: player.id,
+      playerName: player.attributes.name,
+      matches: player.relationships.matches.data.map((match) => match.id),
+    }));
+
+    const playersWithMatches = await Promise.all(
+      playersWithMatchIds.map(async (player) => {
+        return await firstValueFrom(
+          this.fetchMatches$(player.matches).pipe(
+            map((matches) => ({
+              playerId: player.playerId,
+              playerName: player.playerName,
+              matches: matches.filter((match) =>
+                this.doesMatchContainPlayers(
+                  match,
+                  players.data.map((p) => p.id),
+                ),
+              ),
+            })),
+          ),
+        );
+      }),
+    );
+
+    return playersWithMatches;
+  }
+
+  private doesMatchContainPlayers(
+    match: MatchResponseDto,
+    playerIds: string[],
+  ): boolean {
+    return playerIds.every((playerId) => {
+      return match.included.some((included) => {
+        if (included.type !== 'participant') return false;
+        return included.attributes.stats.playerId === playerId;
+      });
+    });
+  }
 
   private fetchPlayers$(playerNames: string[]): Observable<PlayerResponseDto> {
     const url =
@@ -56,6 +108,14 @@ export class LeaderboardService {
               );
           }
         }
+      }),
+    );
+  }
+
+  private fetchMatches$(matchIds: string[]): Observable<MatchResponseDto[]> {
+    return zip(
+      matchIds.map((matchId) => {
+        return this.fetchMatch$(matchId);
       }),
     );
   }

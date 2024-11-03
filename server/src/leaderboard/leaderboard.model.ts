@@ -12,8 +12,8 @@ type MatchIncludedDto = ParticipantDto | RosterDto;
 interface ParticipantDto {
   type: 'participant';
   id: string;
-  attributes: {
-    stats: {
+  attributes?: {
+    stats?: {
       // DBNOs: 0;
       assists: number;
       boosts: number;
