@@ -8,6 +8,9 @@ dependencies:
   '@angular/animations':
     specifier: ^18.2.10
     version: 18.2.10(@angular/core@18.2.10)
+  '@angular/cdk':
+    specifier: 18.2.11
+    version: 18.2.11(@angular/common@18.2.10)(@angular/core@18.2.10)(rxjs@7.8.1)
   '@angular/common':
     specifier: ^18.2.10
     version: 18.2.10(@angular/core@18.2.10)(rxjs@7.8.1)
@@ -20,6 +23,9 @@ dependencies:
   '@angular/forms':
     specifier: ^18.2.10
     version: 18.2.10(@angular/common@18.2.10)(@angular/core@18.2.10)(@angular/platform-browser@18.2.10)(rxjs@7.8.1)
+  '@angular/material':
+    specifier: 18.2.11
+    version: 18.2.11(@angular/animations@18.2.10)(@angular/cdk@18.2.11)(@angular/common@18.2.10)(@angular/core@18.2.10)(@angular/forms@18.2.10)(@angular/platform-browser@18.2.10)(rxjs@7.8.1)
   '@angular/platform-browser':
     specifier: ^18.2.10
     version: 18.2.10(@angular/animations@18.2.10)(@angular/common@18.2.10)(@angular/core@18.2.10)
@@ -339,6 +345,21 @@ packages:
       - terser
     dev: true
 
+  /@angular/cdk@18.2.11(@angular/common@18.2.10)(@angular/core@18.2.10)(rxjs@7.8.1):
+    resolution: {integrity: sha512-FuvfhrSz2ch0gyOVHrkWq2C/I2PnOzKYSXlG/VEG+ize/WNrvlYy//5WVrTh/hv+HD9sdoWPr9ULXsfFfgbo7w==}
+    peerDependencies:
+      '@angular/common': ^18.0.0 || ^19.0.0
+      '@angular/core': ^18.0.0 || ^19.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/common': 18.2.10(@angular/core@18.2.10)(rxjs@7.8.1)
+      '@angular/core': 18.2.10(rxjs@7.8.1)(zone.js@0.14.10)
+      rxjs: 7.8.1
+      tslib: 2.8.0
+    optionalDependencies:
+      parse5: 7.2.1
+    dev: false
+
   /@angular/cli@18.2.11:
     resolution: {integrity: sha512-0JI1xjOLRemBPjdT/yVlabxc3Zkjqa/lhvVxxVC1XhKoW7yGxIGwNrQ4pka4CcQtCuktO6KPMmTGIu8YgC3cpw==}
     engines: {node: ^18.19.1 || ^20.11.1 || >=22.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
@@ -435,6 +456,27 @@ packages:
     dependencies:
       '@angular/common': 18.2.10(@angular/core@18.2.10)(rxjs@7.8.1)
       '@angular/core': 18.2.10(rxjs@7.8.1)(zone.js@0.14.10)
+      '@angular/platform-browser': 18.2.10(@angular/animations@18.2.10)(@angular/common@18.2.10)(@angular/core@18.2.10)
+      rxjs: 7.8.1
+      tslib: 2.8.0
+    dev: false
+
+  /@angular/material@18.2.11(@angular/animations@18.2.10)(@angular/cdk@18.2.11)(@angular/common@18.2.10)(@angular/core@18.2.10)(@angular/forms@18.2.10)(@angular/platform-browser@18.2.10)(rxjs@7.8.1):
+    resolution: {integrity: sha512-VPfnpwmg6p5DsH1UMfOXjKA+qAbUx6nyinGWpx4+ntr/T1oEhRk5CnoOtVS0Xk0rnRSbEF6ayjDBH2YPR9ol3A==}
+    peerDependencies:
+      '@angular/animations': ^18.0.0 || ^19.0.0
+      '@angular/cdk': 18.2.11
+      '@angular/common': ^18.0.0 || ^19.0.0
+      '@angular/core': ^18.0.0 || ^19.0.0
+      '@angular/forms': ^18.0.0 || ^19.0.0
+      '@angular/platform-browser': ^18.0.0 || ^19.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/animations': 18.2.10(@angular/core@18.2.10)
+      '@angular/cdk': 18.2.11(@angular/common@18.2.10)(@angular/core@18.2.10)(rxjs@7.8.1)
+      '@angular/common': 18.2.10(@angular/core@18.2.10)(rxjs@7.8.1)
+      '@angular/core': 18.2.10(rxjs@7.8.1)(zone.js@0.14.10)
+      '@angular/forms': 18.2.10(@angular/common@18.2.10)(@angular/core@18.2.10)(@angular/platform-browser@18.2.10)(rxjs@7.8.1)
       '@angular/platform-browser': 18.2.10(@angular/animations@18.2.10)(@angular/common@18.2.10)(@angular/core@18.2.10)
       rxjs: 7.8.1
       tslib: 2.8.0
@@ -4300,7 +4342,6 @@ packages:
   /entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
-    dev: true
 
   /env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
@@ -6307,7 +6348,6 @@ packages:
     resolution: {integrity: sha512-BuBYQYlv1ckiPdQi/ohiivi9Sagc9JG+Ozs0r7b/0iK3sKmrb0b9FdWdBbOdx6hBCM/F9Ir82ofnBhtZOjCRPQ==}
     dependencies:
       entities: 4.5.0
-    dev: true
 
   /parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
