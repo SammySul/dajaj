@@ -6,6 +6,7 @@ import { AxiosError } from 'axios';
 import { Cache } from 'cache-manager';
 import {
   catchError,
+  filter,
   from,
   map,
   Observable,
@@ -145,12 +146,12 @@ export class LeaderboardService {
   private fetchMatches$(matchIds: string[]): Observable<MatchResponseDto[]> {
     return zip(
       matchIds.map((matchId) => {
-        return this.fetchMatch$(matchId);
+        return this.fetchMatch$(matchId).pipe(filter((match) => !!match));
       }),
     );
   }
 
-  private fetchMatch$(matchId: string): Observable<MatchResponseDto> {
+  private fetchMatch$(matchId: string): Observable<MatchResponseDto | null> {
     const url = `${PUBG_API_URL}/matches/${matchId}`;
 
     return this.httpService
