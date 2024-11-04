@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { LeaderboardService } from './leaderboard.service';
-import { LeaderboardDto } from './leaderboard.model';
+import { PlayerStatsDto } from './leaderboard.model';
 import { map, Observable, of } from 'rxjs';
 import { ListRes } from 'src/core/dtos';
 
@@ -11,7 +11,7 @@ export class LeaderboardController {
   @Post()
   fetchLeaderboard(
     @Body() usernames: string[],
-  ): Observable<ListRes<LeaderboardDto>> {
+  ): Observable<ListRes<PlayerStatsDto>> {
     if (!this.leaderboardService.arePlayerNamesValid(usernames))
       return of({ data: [], count: 0 });
 

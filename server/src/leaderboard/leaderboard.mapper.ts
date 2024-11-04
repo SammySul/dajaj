@@ -1,6 +1,6 @@
 import {
-  LeaderboardDto,
-  LeaderboardStats,
+  PlayerStatsDto,
+  Stats,
   MatchResponseDto,
   ParticipantDto,
 } from './leaderboard.model';
@@ -10,7 +10,7 @@ export class LeaderboardMapper {
     playerId: string;
     playerName: string;
     matches: MatchResponseDto[];
-  }): LeaderboardDto {
+  }): PlayerStatsDto {
     const playerStatsFromMatches = data.matches.flatMap((match) => {
       const playerStats = match.included.filter(
         (included): included is ParticipantDto => {
@@ -24,7 +24,7 @@ export class LeaderboardMapper {
       return playerStats.map((playerStat) => playerStat.attributes.stats);
     });
 
-    const stats: LeaderboardStats = playerStatsFromMatches.reduce(
+    const stats: Stats = playerStatsFromMatches.reduce(
       (acc, curr) => {
         return {
           assists: acc.assists + curr.assists,
@@ -42,7 +42,7 @@ export class LeaderboardMapper {
           vehicleDestroys: acc.vehicleDestroys + curr.vehicleDestroys,
           walkDistance: acc.walkDistance + curr.walkDistance,
           weaponsAcquired: acc.weaponsAcquired + curr.weaponsAcquired,
-        } as LeaderboardStats;
+        } as Stats;
       },
       {
         assists: 0,

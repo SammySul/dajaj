@@ -16,7 +16,7 @@ import {
 } from 'rxjs';
 import { PUBG_ACCEPT_HEADER, PUBG_API_URL } from './leaderboard.consts';
 import {
-  LeaderboardDto,
+  PlayerStatsDto,
   MatchResponseDto,
   PlayerResponseDto,
 } from './leaderboard.model';
@@ -34,7 +34,7 @@ export class LeaderboardService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  fetchLeaderboard$(playerNames: string[]): Observable<LeaderboardDto[]> {
+  fetchLeaderboard$(playerNames: string[]): Observable<PlayerStatsDto[]> {
     return this.fetchPlayersWithMathes$(playerNames).pipe(
       map((players) => players.map(LeaderboardMapper.toLeaderboardDto)),
     );

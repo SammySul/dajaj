@@ -90,12 +90,12 @@ interface MatchDto {
   };
 }
 
-export interface LeaderboardDto {
+export interface PlayerStatsDto {
   playerName: string;
-  stats: LeaderboardStats;
+  stats: Stats;
 }
 
-export interface LeaderboardStats {
+export interface Stats {
   assists: number;
   damage: number;
   headshotKills: number;
