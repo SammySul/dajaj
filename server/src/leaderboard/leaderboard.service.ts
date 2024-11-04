@@ -26,6 +26,7 @@ import { LeaderboardMapper } from './leaderboard.mapper';
 export class LeaderboardService {
   private readonly apiKey =
     this.configService.getOrThrow<string>('PUBG_API_KEY');
+  private readonly validPlayers = this.getAvailablePlayers();
 
   constructor(
     private readonly httpService: HttpService,
@@ -37,6 +38,10 @@ export class LeaderboardService {
     return this.fetchPlayersWithMathes$(playerNames).pipe(
       map((players) => players.map(LeaderboardMapper.toLeaderboardDto)),
     );
+  }
+
+  arePlayerNamesValid(playerName: string[]): boolean {
+    return playerName.every((name) => this.validPlayers.includes(name));
   }
 
   private fetchPlayersWithMathes$(playerNames: string[]): Observable<
@@ -161,5 +166,9 @@ export class LeaderboardService {
           return of(null);
         }),
       );
+  }
+
+  private getAvailablePlayers(): string[] {
+    return this.configService.getOrThrow<string>('PUBG_PLAYERS').split(',');
   }
 }
