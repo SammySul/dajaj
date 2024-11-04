@@ -1,8 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable, signal } from "@angular/core";
-import { catchError, filter, map, Observable, of, tap } from "rxjs";
-import { PlayerStatsDto } from "./leaderboard.model";
+import { catchError, map, Observable, of, tap } from "rxjs";
 import { ListRes } from "../core/dtos";
+import { PlayerStatsDto } from "./leaderboard.model";
 
 @Injectable()
 export class LeaderboardService {
@@ -11,8 +11,8 @@ export class LeaderboardService {
   private readonly playerStats = signal<PlayerStatsDto[]>([]);
 
   getLeaderboard$(
-    doRefresh: boolean = false,
-    usernames: string[]
+    usernames: string[],
+    doRefresh: boolean = false
   ): Observable<PlayerStatsDto[]> {
     const cachedPlayerStats = this.playerStats();
     if (!doRefresh && cachedPlayerStats.length > 0)
