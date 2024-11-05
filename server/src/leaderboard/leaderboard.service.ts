@@ -6,6 +6,7 @@ import { AxiosError } from 'axios';
 import { Cache } from 'cache-manager';
 import {
   catchError,
+  defaultIfEmpty,
   filter,
   from,
   map,
@@ -16,12 +17,12 @@ import {
   zip,
 } from 'rxjs';
 import { PUBG_ACCEPT_HEADER, PUBG_API_URL } from './leaderboard.consts';
+import { LeaderboardMapper } from './leaderboard.mapper';
 import {
-  PlayerStatsDto,
   MatchResponseDto,
   PlayerResponseDto,
+  PlayerStatsDto,
 } from './leaderboard.model';
-import { LeaderboardMapper } from './leaderboard.mapper';
 
 @Injectable()
 export class LeaderboardService {
@@ -102,7 +103,17 @@ export class LeaderboardService {
 
     return from(this.cacheManager.get<PlayerResponseDto>('players')).pipe(
       switchMap((cachedPlayers) => {
-        if (!!cachedPlayers)
+        if (
+          !!cachedPlayers &&
+          cachedPlayers.data.every((player) =>
+            playerNames.includes(player.attributes.name),
+          ) &&
+          playerNames.every((name) =>
+            cachedPlayers.data.some(
+              (player) => player.attributes.name === name,
+            ),
+          )
+        )
           return of(cachedPlayers).pipe(
             tap(() =>
               Logger.debug(
@@ -148,14 +159,13 @@ export class LeaderboardService {
   }
 
   private fetchMatches$(matchIds: string[]): Observable<MatchResponseDto[]> {
-    return of([]);
-    // return zip(
-    //   matchIds
-    //     .map((matchId) => {
-    //       return this.fetchMatch$(matchId)?.pipe(filter((match) => !!match));
-    //     })
-    //     .filter((match) => !!match),
-    // );
+    return zip(
+      matchIds
+        .map((matchId) => {
+          return this.fetchMatch$(matchId)?.pipe(filter((match) => !!match));
+        })
+        .filter((match) => !!match),
+    ).pipe(defaultIfEmpty([]));
   }
 
   private fetchMatch$(matchId: string): Observable<MatchResponseDto | null> {
