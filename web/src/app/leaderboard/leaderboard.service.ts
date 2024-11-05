@@ -13,9 +13,15 @@ export class LeaderboardService {
   private readonly validPlayers = signal<string[]>([]);
 
   getValidPlayers$(): Observable<string[]> {
+    const cachedValidPlayers = this.validPlayers();
+    if (cachedValidPlayers.length > 0) return of(cachedValidPlayers);
+
     return this.httpClient
       .get<ListRes<string>>(`${environment.baseUrl}/leaderboard/players`)
-      .pipe(map((res) => res.data));
+      .pipe(
+        map((res) => res.data),
+        tap((data) => this.validPlayers.set(data)),
+      );
   }
 
   getLeaderboard$(

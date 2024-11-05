@@ -15,8 +15,10 @@ export class LeaderboardController {
 
   @Post()
   fetchLeaderboard(
-    @Body() usernames: string[],
+    @Body('usernames') usernames: string[],
   ): Observable<ListRes<PlayerStatsDto>> {
+    if (!usernames || !usernames.length) return of({ data: [], count: 0 });
+
     if (!this.leaderboardService.arePlayerNamesValid(usernames))
       return of({ data: [], count: 0 });
 
