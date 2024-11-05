@@ -2,23 +2,29 @@ import { Component, inject, Input, signal } from '@angular/core';
 import { LeaderboardService } from './leaderboard.service';
 import { VisualizationsComponent } from './visualizations/visualizations.component';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter, switchMap, take, tap } from 'rxjs';
+import { filter, Observable, switchMap, take, tap } from 'rxjs';
 import { PlayerStatsDto } from './leaderboard.model';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton, MatIconButton } from '@angular/material/button';
 
 @Component({
   template: `
-    <mat-form-field>
-      <mat-label>Usernames</mat-label>
-      <mat-select [formControl]="usernames" multiple>
-        @for (username of $validUsernames(); track username) {
-        <mat-option [value]="username">{{ username }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
+    <div>
+      <mat-form-field>
+        <mat-label>Usernames</mat-label>
+        <mat-select [formControl]="usernames" multiple>
+          @for (username of $validUsernames(); track username) {
+          <mat-option [value]="username">{{ username }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-icon-button (click)="onRefresh()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
     <app-visualizations
       [visualization]="'table'"
       [playerStats]="$playerStats()"
@@ -30,6 +36,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    MatIcon,
+    MatIconButton,
   ],
   providers: [LeaderboardService],
   selector: 'app-leaderboard',
@@ -51,17 +59,26 @@ export class LeaderboardComponent {
     this.usernames.valueChanges
       .pipe(
         filter((usernames) => !!usernames),
-        switchMap((usernames) =>
-          this.leaderboardService.getLeaderboard$(usernames),
-        ),
+        switchMap((usernames) => this.getPlayerStats$(usernames, false)),
         takeUntilDestroyed(),
       )
       .subscribe();
   }
 
-  protected getPlayerStats$() {
-    return this.leaderboardService.getLeaderboard$([]).pipe(
-      tap((playerStats) => this.$playerStats.set(playerStats)),
+  protected onRefresh(): void {
+    this.getPlayerStats$(this.usernames.value ?? [], true).subscribe();
+  }
+
+  protected getPlayerStats$(
+    usernames: string[],
+    doRefresh = false,
+  ): Observable<PlayerStatsDto[]> {
+    return this.leaderboardService.getLeaderboard$(usernames, doRefresh).pipe(
+      tap((playerStats) => {
+        this.$playerStats.set(
+          playerStats.filter((stats) => usernames.includes(stats.playerName)),
+        );
+      }),
       take(1),
     );
   }
