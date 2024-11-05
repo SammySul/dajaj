@@ -148,11 +148,14 @@ export class LeaderboardService {
   }
 
   private fetchMatches$(matchIds: string[]): Observable<MatchResponseDto[]> {
-    return zip(
-      matchIds.map((matchId) => {
-        return this.fetchMatch$(matchId).pipe(filter((match) => !!match));
-      }),
-    );
+    return of([]);
+    // return zip(
+    //   matchIds
+    //     .map((matchId) => {
+    //       return this.fetchMatch$(matchId)?.pipe(filter((match) => !!match));
+    //     })
+    //     .filter((match) => !!match),
+    // );
   }
 
   private fetchMatch$(matchId: string): Observable<MatchResponseDto | null> {

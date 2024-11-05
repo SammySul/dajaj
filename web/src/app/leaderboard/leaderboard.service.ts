@@ -5,6 +5,7 @@ import { ListRes } from '../core/dtos';
 import { PlayerStatsDto } from './leaderboard.model';
 import { environment } from '../../environments/environment';
 import { AppService } from '../app.service';
+import { consumerBeforeComputation } from '@angular/core/primitives/signals';
 
 @Injectable()
 export class LeaderboardService {
@@ -31,8 +32,15 @@ export class LeaderboardService {
     doRefresh: boolean = false,
   ): Observable<PlayerStatsDto[]> {
     const cachedPlayerStats = this.playerStats();
-    if (!doRefresh && cachedPlayerStats.length > 0)
+    if (
+      !doRefresh &&
+      cachedPlayerStats.length > 0 &&
+      usernames.every((username) =>
+        cachedPlayerStats.some((player) => player.playerName === username),
+      )
+    ) {
       return of(cachedPlayerStats);
+    }
 
     this.appService.$isError.set(false);
     this.appService.$isLoading.set(true);

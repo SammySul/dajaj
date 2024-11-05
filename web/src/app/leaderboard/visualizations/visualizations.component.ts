@@ -31,6 +31,6 @@ export class VisualizationsComponent {
   });
 
   a = effect(() => {
-    console.log(this.$playerStats());
+    // console.log(this.$playerStats());
   });
 }

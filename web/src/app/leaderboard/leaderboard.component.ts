@@ -78,11 +78,7 @@ export class LeaderboardComponent {
     doRefresh = false,
   ): Observable<PlayerStatsDto[]> {
     return this.leaderboardService.getLeaderboard$(usernames, doRefresh).pipe(
-      tap((playerStats) => {
-        this.$playerStats.set(
-          playerStats.filter((stats) => usernames.includes(stats.playerName)),
-        );
-      }),
+      tap((playerStats) => this.$playerStats.set(playerStats)),
       take(1),
     );
   }

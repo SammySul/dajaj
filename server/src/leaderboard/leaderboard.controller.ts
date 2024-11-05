@@ -23,10 +23,13 @@ export class LeaderboardController {
       return of({ data: [], count: 0 });
 
     return this.leaderboardService.fetchLeaderboard$(usernames).pipe(
-      map((data) => ({
-        data,
-        count: data.length,
-      })),
+      map((data) => {
+        const res = data.filter((a) => usernames.includes(a.playerName));
+        return {
+          data: res,
+          count: res.length,
+        };
+      }),
     );
   }
 }
