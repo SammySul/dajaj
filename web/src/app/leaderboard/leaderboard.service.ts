@@ -4,9 +4,11 @@ import { catchError, map, Observable, of, tap } from 'rxjs';
 import { ListRes } from '../core/dtos';
 import { PlayerStatsDto } from './leaderboard.model';
 import { environment } from '../../environments/environment';
+import { AppService } from '../app.service';
 
 @Injectable()
 export class LeaderboardService {
+  private readonly appService = inject(AppService);
   private readonly httpClient = inject(HttpClient);
 
   private readonly playerStats = signal<PlayerStatsDto[]>([]);
@@ -32,15 +34,22 @@ export class LeaderboardService {
     if (!doRefresh && cachedPlayerStats.length > 0)
       return of(cachedPlayerStats);
 
+    this.appService.$isError.set(false);
+    this.appService.$isLoading.set(true);
+
     return this.httpClient
       .post<ListRes<PlayerStatsDto>>(`${environment.baseUrl}/leaderboard`, {
         usernames,
       })
       .pipe(
         map((res) => res.data),
-        tap((data) => this.playerStats.set(data)),
+        tap((data) => {
+          this.appService.$isLoading.set(false);
+          this.playerStats.set(data);
+        }),
         catchError((err) => {
           console.error(err);
+          this.appService.$isError.set(true);
           return of([]);
         }),
       );

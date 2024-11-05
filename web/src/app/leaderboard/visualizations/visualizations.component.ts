@@ -7,15 +7,16 @@ import { PlayerStatsDto } from '../leaderboard.model';
 
 @Component({
   template: `
-    @switch ($visualization()) { @case ('table') {
-    <app-table></app-table>
-    } @case ('bar') {
-    <app-bar></app-bar>
-    } @case ('pie') {
-    <app-pie></app-pie>
-    } }
+    <div class="container">
+      @switch ($visualization()) { @case ('table') {
+      <app-table></app-table>
+      } @case ('bar') {
+      <app-bar></app-bar>
+      } @case ('pie') {
+      <app-pie></app-pie>
+      } }
+    </div>
   `,
-  styles: ``,
   imports: [TableComponent, BarComponent, PieComponent],
   selector: 'app-visualizations',
   standalone: true,

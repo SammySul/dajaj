@@ -1,34 +1,38 @@
-import { Component, inject, Input, signal } from '@angular/core';
-import { LeaderboardService } from './leaderboard.service';
-import { VisualizationsComponent } from './visualizations/visualizations.component';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter, Observable, switchMap, take, tap } from 'rxjs';
-import { PlayerStatsDto } from './leaderboard.model';
+import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
+import { MatIconButton } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { filter, Observable, switchMap, take, tap } from 'rxjs';
+import { PlayerStatsDto } from './leaderboard.model';
+import { LeaderboardService } from './leaderboard.service';
+import { VisualizationsComponent } from './visualizations/visualizations.component';
 
 @Component({
   template: `
-    <div>
-      <mat-form-field>
-        <mat-label>Usernames</mat-label>
-        <mat-select [formControl]="usernames" multiple>
-          @for (username of $validUsernames(); track username) {
-          <mat-option [value]="username">{{ username }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <button mat-icon-button (click)="onRefresh()">
-        <mat-icon>refresh</mat-icon>
-      </button>
+    <div class="container">
+      <div>
+        <mat-form-field>
+          <mat-label>Usernames</mat-label>
+          <mat-select [formControl]="usernames" multiple>
+            @for (username of $validUsernames(); track username) {
+            <mat-option [value]="username">{{ username }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-icon-button (click)="onRefresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+      <app-visualizations
+        [visualization]="'table'"
+        [playerStats]="$playerStats()"
+      ></app-visualizations>
     </div>
-    <app-visualizations
-      [visualization]="'table'"
-      [playerStats]="$playerStats()"
-    ></app-visualizations>
+  `,
+  styles: `
   `,
   imports: [
     VisualizationsComponent,

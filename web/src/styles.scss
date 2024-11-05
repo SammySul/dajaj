@@ -6,10 +6,5 @@ body {
 }
 body {
   margin: auto;
-  padding: 1rem;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-
-  @media (min-width: 1024px) {
-    max-width: 42rem;
-  }
 }
