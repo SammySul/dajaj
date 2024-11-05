@@ -4,7 +4,7 @@ import { VisualizationsComponent } from './visualizations/visualizations.compone
 
 @Component({
   template: `
-    <app-visualizations [visualization]="'table'"></app-visualizations>
+    <!-- <app-visualizations [visualization]="'table'"></app-visualizations> -->
   `,
   imports: [VisualizationsComponent],
   providers: [LeaderboardService],
@@ -13,4 +13,8 @@ import { VisualizationsComponent } from './visualizations/visualizations.compone
 })
 export class LeaderboardComponent {
   private readonly leaderboardService = inject(LeaderboardService);
+
+  protected getPlayerStats$() {
+    // this.leaderboardService.getLeaderboard$()
+  }
 }

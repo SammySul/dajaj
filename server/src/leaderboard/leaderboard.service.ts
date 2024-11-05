@@ -41,6 +41,10 @@ export class LeaderboardService {
     );
   }
 
+  getValidPlayers(): string[] {
+    return this.validPlayers;
+  }
+
   arePlayerNamesValid(playerName: string[]): boolean {
     return playerName.every((name) => this.validPlayers.includes(name));
   }
