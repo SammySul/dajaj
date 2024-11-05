@@ -1,18 +1,16 @@
-import { Component, inject } from "@angular/core";
-import { LeaderboardService } from "./leaderboard.service";
+import { Component, inject } from '@angular/core';
+import { LeaderboardService } from './leaderboard.service';
+import { VisualizationsComponent } from './visualizations/visualizations.component';
 
 @Component({
-  template: ` <p>leaderboard works!</p> `,
+  template: `
+    <app-visualizations [visualization]="'table'"></app-visualizations>
+  `,
+  imports: [VisualizationsComponent],
   providers: [LeaderboardService],
-  selector: "app-leaderboard",
+  selector: 'app-leaderboard',
   standalone: true,
 })
 export class LeaderboardComponent {
   private readonly leaderboardService = inject(LeaderboardService);
-
-  constructor() {
-    this.leaderboardService
-      .getLeaderboard$(["SamiSul", "Rectifier94"])
-      .subscribe(console.log);
-  }
 }
