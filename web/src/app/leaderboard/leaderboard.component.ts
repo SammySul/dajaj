@@ -32,7 +32,6 @@ import { VisualizationsComponent } from './visualizations/visualizations.compone
       ></app-visualizations>
     </div>
   `,
-  styles: ``,
   imports: [
     VisualizationsComponent,
     MatFormFieldModule,

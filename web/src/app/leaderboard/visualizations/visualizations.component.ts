@@ -1,20 +1,23 @@
-import { Component, effect, input } from '@angular/core';
-import { Visualization } from './visualiztions.model';
-import { TableComponent } from './table.component';
+import { Component, inject, input } from '@angular/core';
+import { PlayerStatsDto } from '../leaderboard.model';
 import { BarComponent } from './charts/bar.component';
 import { PieComponent } from './charts/pie.component';
-import { PlayerStatsDto } from '../leaderboard.model';
+import { TableComponent } from './table.component';
+import { Visualization } from './visualiztions.model';
 
 @Component({
   template: `
     <div class="container">
-      @switch ($visualization()) { @case ('table') {
-      <app-table></app-table>
+      @if ($playerStats(); as playerStats) { @switch ($visualization()) { @case
+      ('table') {
+      <app-table [playerStats]="playerStats"></app-table>
       } @case ('bar') {
       <app-bar></app-bar>
       } @case ('pie') {
       <app-pie></app-pie>
-      } }
+      } } } @else{
+      <span> No data to display. </span>
+      }
     </div>
   `,
   imports: [TableComponent, BarComponent, PieComponent],
@@ -28,9 +31,5 @@ export class VisualizationsComponent {
   });
   readonly $playerStats = input.required<PlayerStatsDto[]>({
     alias: 'playerStats',
-  });
-
-  a = effect(() => {
-    // console.log(this.$playerStats());
   });
 }

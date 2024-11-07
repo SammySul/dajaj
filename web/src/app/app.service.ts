@@ -10,7 +10,9 @@ export class AppService {
   readonly $isLoading = signal(false);
   readonly $isError = signal(false);
 
-  private readonly errorEffect = effect(() => {
-    if (this.$isError()) this.snackBar.open('An Error Occured.', 'dismiss');
-  });
+  constructor() {
+    effect(() => {
+      if (this.$isError()) this.snackBar.open('An Error Occured.', 'dismiss');
+    });
+  }
 }
