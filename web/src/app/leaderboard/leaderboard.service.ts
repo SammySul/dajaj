@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { ListRes } from '../core/dtos';
-import { PlayerStatsDto } from './leaderboard.model';
 import { environment } from '../../environments/environment';
 import { AppService } from '../app.service';
-import { consumerBeforeComputation } from '@angular/core/primitives/signals';
+import { ListRes } from '../core/dtos';
+import { PlayerStatsDto } from './leaderboard.model';
 
 @Injectable()
 export class LeaderboardService {
@@ -34,9 +33,9 @@ export class LeaderboardService {
     const cachedPlayerStats = this.playerStats();
     if (
       !doRefresh &&
-      cachedPlayerStats.length > 0 &&
-      usernames.every((username) =>
-        cachedPlayerStats.some((player) => player.playerName === username),
+      this.areArraysEqual(
+        usernames,
+        cachedPlayerStats.map((p) => p.playerName),
       )
     ) {
       return of(cachedPlayerStats);
@@ -57,9 +56,15 @@ export class LeaderboardService {
         }),
         catchError((err) => {
           console.error(err);
+          this.appService.$isLoading.set(false);
           this.appService.$isError.set(true);
           return of([]);
         }),
       );
+  }
+
+  private areArraysEqual<T>(arr1: T[], arr2: T[]): boolean {
+    if (arr1.length !== arr2.length) return false;
+    return arr1.slice().sort().toString() === arr2.slice().sort().toString();
   }
 }
