@@ -20,6 +20,7 @@ import { PUBG_ACCEPT_HEADER, PUBG_API_URL } from './leaderboard.consts';
 import { LeaderboardMapper } from './leaderboard.mapper';
 import {
   MatchResponseDto,
+  PlayerDto,
   PlayerResponseDto,
   PlayerStatsDto,
 } from './leaderboard.model';
@@ -58,8 +59,9 @@ export class LeaderboardService {
     }[]
   > {
     return this.fetchPlayers$(playerNames).pipe(
+      filter((players) => !!players),
       switchMap((players) => {
-        const playersWithMatchIds = players.data.map((player) => ({
+        const playersWithMatchIds = players.map((player) => ({
           playerId: player.id,
           playerName: player.attributes.name,
           matches: player.relationships.matches.data.map((match) => match.id),
@@ -73,7 +75,7 @@ export class LeaderboardService {
                 matches: matches.filter((match) =>
                   this.doesMatchContainPlayers(
                     match,
-                    players.data.map((p) => p.id),
+                    players.map((p) => p.id),
                   ),
                 ),
               })),
@@ -81,6 +83,7 @@ export class LeaderboardService {
           }),
         );
       }),
+      defaultIfEmpty([]),
     );
   }
 
@@ -97,7 +100,7 @@ export class LeaderboardService {
     );
   }
 
-  private fetchPlayers$(playerNames: string[]): Observable<PlayerResponseDto> {
+  private fetchPlayers$(playerNames: string[]): Observable<PlayerDto[]> {
     const url =
       `${PUBG_API_URL}/players?filter[playerNames]=` + playerNames.join(',');
 
@@ -105,9 +108,6 @@ export class LeaderboardService {
       switchMap((cachedPlayers) => {
         if (
           !!cachedPlayers &&
-          cachedPlayers.data.every((player) =>
-            playerNames.includes(player.attributes.name),
-          ) &&
           playerNames.every((name) =>
             cachedPlayers.data.some(
               (player) => player.attributes.name === name,
@@ -121,6 +121,7 @@ export class LeaderboardService {
                 LeaderboardService.name,
               ),
             ),
+            map((data) => data.data),
           );
         else {
           {
@@ -132,17 +133,15 @@ export class LeaderboardService {
                 },
               })
               .pipe(
-                map((response) => response.data),
-                tap(() =>
+                filter((response) => !!response?.data?.data),
+                map((response) => response.data.data),
+                tap(async (data) => {
                   Logger.debug(
                     'Cache miss, fetching from API',
                     LeaderboardService.name,
-                  ),
-                ),
-                tap(
-                  async (data) =>
-                    await this.cacheManager.set('players', data, 3600),
-                ),
+                  );
+                  await this.cacheManager.set('players', data, 3600);
+                }),
                 catchError((error: AxiosError) => {
                   Logger.error(
                     error.message,

@@ -63,7 +63,7 @@ interface RosterDto {
   };
 }
 
-interface PlayerDto {
+export interface PlayerDto {
   type: 'player';
   id: string;
   attributes: {
