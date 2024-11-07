@@ -104,14 +104,12 @@ export class LeaderboardService {
     const url =
       `${PUBG_API_URL}/players?filter[playerNames]=` + playerNames.join(',');
 
-    return from(this.cacheManager.get<PlayerResponseDto>('players')).pipe(
+    return from(this.cacheManager.get<PlayerDto[]>('players')).pipe(
       switchMap((cachedPlayers) => {
         if (
           !!cachedPlayers &&
           playerNames.every((name) =>
-            cachedPlayers.data.some(
-              (player) => player.attributes.name === name,
-            ),
+            cachedPlayers.some((player) => player.attributes.name === name),
           )
         )
           return of(cachedPlayers).pipe(
@@ -121,7 +119,11 @@ export class LeaderboardService {
                 LeaderboardService.name,
               ),
             ),
-            map((data) => data.data),
+            map((data) =>
+              data.filter((player) =>
+                playerNames.includes(player.attributes.name),
+              ),
+            ),
           );
         else {
           {
