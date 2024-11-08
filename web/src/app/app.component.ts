@@ -7,7 +7,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   template: `
     <div class="container">
       @if (appService.$isLoading()) {
-        <mat-progress-bar mode="buffer"></mat-progress-bar>
+      <mat-progress-bar mode="buffer"></mat-progress-bar>
       }
       <main>
         <router-outlet></router-outlet>
@@ -16,14 +16,8 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   `,
   styles: `
     main {
-      margin: auto;
-      padding: 1rem;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      @media (min-width: 1024px) {
-        max-width: 42rem;
-      }
     }
   `,
   selector: 'app-root',

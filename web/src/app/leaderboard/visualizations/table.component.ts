@@ -5,107 +5,126 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 
 @Component({
   template: `
-    <table
-      mat-table
-      [dataSource]="$dataSource()"
-      class="mat-elevation-z8"
-      matSort
-    >
+    <mat-table [dataSource]="$dataSource()" class="mat-elevation-z8" matSort>
       <ng-container matColumnDef="playerName">
-        <th mat-header-cell *matHeaderCellDef>Player</th>
-        <td mat-cell *matCellDef="let element">{{ element.playerName }}</td>
+        <mat-header-cell *matHeaderCellDef>Player</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.playerName }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="assists">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Assists</th>
-        <td mat-cell *matCellDef="let element">{{ element.assists }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Assists</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.assists }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="damage">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Damage</th>
-        <td mat-cell *matCellDef="let element">{{ element.damage }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Damage</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.damage }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="headshotKills">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Headshot Kills
-        </th>
-        <td mat-cell *matCellDef="let element">{{ element.headshotKills }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Headshot Kills</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{
+          element.headshotKills
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="heals">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Heals</th>
-        <td mat-cell *matCellDef="let element">{{ element.heals }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Heals</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.heals }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="kills">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Kills</th>
-        <td mat-cell *matCellDef="let element">{{ element.kills }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Kills</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.kills }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="longestKill">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Longest Kill</th>
-        <td mat-cell *matCellDef="let element">{{ element.longestKill }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Longest Kill</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.longestKill }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="revives">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Revives</th>
-        <td mat-cell *matCellDef="let element">{{ element.revives }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Revives</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.revives }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="rideDistance">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Ride Distance</th>
-        <td mat-cell *matCellDef="let element">{{ element.rideDistance }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Ride Distance</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{
+          element.rideDistance
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="roadKills">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Road Kills</th>
-        <td mat-cell *matCellDef="let element">{{ element.roadKills }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Road Kills</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.roadKills }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="swimDistance">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Swim Distance</th>
-        <td mat-cell *matCellDef="let element">{{ element.swimDistance }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Swim Distance</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{
+          element.swimDistance
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="teamKills">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Team Kills</th>
-        <td mat-cell *matCellDef="let element">{{ element.teamKills }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Team Kills</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{ element.teamKills }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="timeSurvived">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Time Survived</th>
-        <td mat-cell *matCellDef="let element">{{ element.timeSurvived }}</td>
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Time Survived</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">{{
+          element.timeSurvived
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="vehicleDestroys">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Vehicle Destroys
-        </th>
-        <td mat-cell *matCellDef="let element">
+        <mat-header-cell *matHeaderCellDef mat-sort-header
+          >Vehicle Destroys</mat-header-cell
+        >
+        <mat-cell *matCellDef="let element">
           {{ element.vehicleDestroys }}
-        </td>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="walkDistance">
-        <th mat-header-cell *matHeaderCellDef>Walk Distance</th>
-        <td mat-cell *matCellDef="let element">{{ element.walkDistance }}</td>
+        <mat-header-cell *matHeaderCellDef>Walk Distance</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{
+          element.walkDistance
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="weaponsAcquired">
-        <th mat-header-cell *matHeaderCellDef>Weapons Acquired</th>
-        <td mat-cell *matCellDef="let element">
+        <mat-header-cell *matHeaderCellDef>Weapons Acquired</mat-header-cell>
+        <mat-cell *matCellDef="let element">
           {{ element.weaponsAcquired }}
-        </td>
+        </mat-cell>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
   `,
   styles: `
-    table {
+    mat-table {
       width: 100%;
-      overflow-x: auto;
+      overflow: auto;
     }
 
-    th, td {
-      padding: 16px;
-      text-align: left;
+    mat-header-row, mat-row, mat-header-cell, mat-cell {
+      min-width: 100px;
     }
-
-    @media (max-width: 600px) {
-      th, td {
-        display: block;
-        width: 100%;
-      }
-    }
-`,
+  `,
   imports: [MatTableModule, MatSortModule],
   selector: 'app-table',
   standalone: true,

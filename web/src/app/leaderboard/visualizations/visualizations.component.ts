@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { PlayerStatsDto } from '../leaderboard.model';
 import { BarComponent } from './charts/bar.component';
 import { PieComponent } from './charts/pie.component';
@@ -7,18 +7,16 @@ import { Visualization } from './visualiztions.model';
 
 @Component({
   template: `
-    <div class="container">
-      @if ($playerStats(); as playerStats) { @switch ($visualization()) { @case
-      ('table') {
-      <app-table [playerStats]="playerStats"></app-table>
-      } @case ('bar') {
-      <app-bar></app-bar>
-      } @case ('pie') {
-      <app-pie></app-pie>
-      } } } @else{
-      <span> No data to display. </span>
-      }
-    </div>
+    @if ($playerStats(); as playerStats) { @switch ($visualization()) { @case
+    ('table') {
+    <app-table [playerStats]="playerStats"></app-table>
+    } @case ('bar') {
+    <app-bar></app-bar>
+    } @case ('pie') {
+    <app-pie></app-pie>
+    } } } @else {
+    <span> No data to display. </span>
+    }
   `,
   imports: [TableComponent, BarComponent, PieComponent],
   selector: 'app-visualizations',

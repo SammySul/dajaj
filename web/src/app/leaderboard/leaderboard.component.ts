@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -18,7 +18,7 @@ import { VisualizationsComponent } from './visualizations/visualizations.compone
           <mat-label>Usernames</mat-label>
           <mat-select [formControl]="usernames" multiple>
             @for (username of $validUsernames(); track username) {
-              <mat-option [value]="username">{{ username }}</mat-option>
+            <mat-option [value]="username">{{ username }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
