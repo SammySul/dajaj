@@ -13,7 +13,7 @@ import { VisualizationsComponent } from './visualizations/visualizations.compone
 @Component({
   template: `
     <div class="container">
-      <div>
+      <div class="username-select">
         <mat-form-field>
           <mat-label>Usernames</mat-label>
           <mat-select [formControl]="usernames" multiple>
@@ -31,6 +31,19 @@ import { VisualizationsComponent } from './visualizations/visualizations.compone
         [playerStats]="$playerStats()"
       ></app-visualizations>
     </div>
+  `,
+  styles: `
+    .username-select {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+
+      mat-form-field {
+        width: 20%;
+        min-width: 200px;
+        margin: 10px;
+      }
+    }
   `,
   imports: [
     VisualizationsComponent,

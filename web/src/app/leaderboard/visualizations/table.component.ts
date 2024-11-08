@@ -2,11 +2,12 @@ import { Component, computed, effect, input, viewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { PlayerStatsDto } from '../leaderboard.model';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   template: `
     <mat-table [dataSource]="$dataSource()" class="mat-elevation-z8" matSort>
-      <ng-container matColumnDef="playerName">
+      <ng-container matColumnDef="playerName" sticky>
         <mat-header-cell *matHeaderCellDef>Player</mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element.playerName }}</mat-cell>
       </ng-container>
@@ -20,7 +21,9 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
         <mat-header-cell *matHeaderCellDef mat-sort-header
           >Damage</mat-header-cell
         >
-        <mat-cell *matCellDef="let element">{{ element.damage }}</mat-cell>
+        <mat-cell *matCellDef="let element">{{
+          element.damage | number
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="headshotKills">
         <mat-header-cell *matHeaderCellDef mat-sort-header
@@ -46,7 +49,9 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
         <mat-header-cell *matHeaderCellDef mat-sort-header
           >Longest Kill</mat-header-cell
         >
-        <mat-cell *matCellDef="let element">{{ element.longestKill }}</mat-cell>
+        <mat-cell *matCellDef="let element">{{
+          element.longestKill | number
+        }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="revives">
         <mat-header-cell *matHeaderCellDef mat-sort-header
@@ -59,7 +64,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
           >Ride Distance</mat-header-cell
         >
         <mat-cell *matCellDef="let element">{{
-          element.rideDistance
+          element.rideDistance | number
         }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="roadKills">
@@ -73,7 +78,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
           >Swim Distance</mat-header-cell
         >
         <mat-cell *matCellDef="let element">{{
-          element.swimDistance
+          element.swimDistance | number
         }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="teamKills">
@@ -101,7 +106,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
       <ng-container matColumnDef="walkDistance">
         <mat-header-cell *matHeaderCellDef>Walk Distance</mat-header-cell>
         <mat-cell *matCellDef="let element">{{
-          element.walkDistance
+          element.walkDistance | number
         }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="weaponsAcquired">
@@ -116,6 +121,11 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
     </mat-table>
   `,
   styles: `
+    .mat-column-playerName{
+      border-right: 1px solid currentColor;
+      padding-right: 100px;
+      text-align: center;
+    }
     mat-table {
       width: 100%;
       overflow: auto;
@@ -125,7 +135,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
       min-width: 100px;
     }
   `,
-  imports: [MatTableModule, MatSortModule],
+  imports: [MatTableModule, MatSortModule, DecimalPipe],
   selector: 'app-table',
   standalone: true,
 })
@@ -136,7 +146,6 @@ export class TableComponent {
 
   protected readonly $dataSource = computed(() => {
     const sort = this.$sort();
-
     const dataSource = new MatTableDataSource(
       this.$playerStats().map((playerStats) => ({
         playerName: playerStats.playerName,
@@ -144,7 +153,6 @@ export class TableComponent {
       })),
     );
     if (sort) dataSource.sort = sort;
-
     return dataSource;
   });
 
