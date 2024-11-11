@@ -8,13 +8,13 @@ import {
   catchError,
   defaultIfEmpty,
   filter,
+  forkJoin,
   from,
   map,
   Observable,
   of,
   switchMap,
   tap,
-  zip,
 } from 'rxjs';
 import { PUBG_ACCEPT_HEADER, PUBG_API_URL } from './leaderboard.consts';
 import { LeaderboardMapper } from './leaderboard.mapper';
@@ -79,7 +79,7 @@ export class LeaderboardService {
       stats: PlayerSeason;
     }[]
   > {
-    return zip(
+    return forkJoin(
       accountIds.map((accountId) =>
         this.fetchPlayerLifetimeStats$(accountId).pipe(
           map((stats) => ({
@@ -88,7 +88,7 @@ export class LeaderboardService {
           })),
         ),
       ),
-    );
+    ).pipe(defaultIfEmpty([]));
   }
 
   private getAllMatchIdsFromPlayerSeason(season: PlayerSeason): string[] {
@@ -146,7 +146,7 @@ export class LeaderboardService {
             ),
           }),
         );
-        return zip(
+        return forkJoin(
           playersWithMatchIds.map((player) => {
             return this.fetchMatches$(player.matches).pipe(
               map((matches) => ({
@@ -238,12 +238,10 @@ export class LeaderboardService {
   }
 
   private fetchMatches$(matchIds: string[]): Observable<MatchResponseDto[]> {
-    return zip(
-      matchIds
-        .map((matchId) => {
-          return this.fetchMatch$(matchId)?.pipe(filter((match) => !!match));
-        })
-        .filter((match) => !!match),
+    return forkJoin(
+      matchIds.map((matchId) =>
+        this.fetchMatch$(matchId).pipe(filter((match) => !!match)),
+      ),
     ).pipe(defaultIfEmpty([]));
   }
 
