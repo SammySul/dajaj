@@ -55,22 +55,54 @@ export class LeaderboardService {
   private fetchPlayerLifetimeStats$(
     accountId: string,
   ): Observable<PlayerSeason> {
-    const url = `${PUBG_API_URL}/players/${accountId}/seasons/lifetime`;
-
-    return this.httpService
-      .get<PlayerSeason>(url, {
-        headers: {
-          Accept: PUBG_ACCEPT_HEADER,
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-      })
-      .pipe(
-        map((response) => response.data),
-        catchError((error: AxiosError) => {
-          Logger.error(error.message, error.stack, LeaderboardService.name);
-          return of(null);
-        }),
-      );
+    return from(
+      this.cacheManager.get<PlayerSeason>(
+        `players.${accountId}.seasons.lifetime`,
+      ),
+    ).pipe(
+      switchMap((cachedStats) => {
+        if (!!cachedStats) {
+          Logger.debug(
+            'CACHE HIT -- player lifetime season stats -- fetching from cache...',
+            LeaderboardService.name,
+          );
+          return of(cachedStats);
+        } else
+          return this.httpService
+            .get<PlayerSeason>(
+              `${PUBG_API_URL}/players/${accountId}/seasons/lifetime`,
+              {
+                headers: {
+                  Accept: PUBG_ACCEPT_HEADER,
+                  Authorization: `Bearer ${this.apiKey}`,
+                },
+              },
+            )
+            .pipe(
+              filter((response) => !!response?.data?.data),
+              map((response) => response.data),
+              tap(async (data) => {
+                Logger.debug(
+                  'CACHE MISS -- player lifetime season stats -- fetching from API...',
+                  LeaderboardService.name,
+                );
+                await this.cacheManager.set(
+                  `players.${accountId}.seasons.lifetime`,
+                  data,
+                  3600,
+                );
+              }),
+              catchError((error: AxiosError) => {
+                Logger.error(
+                  error.message,
+                  error.stack,
+                  LeaderboardService.name,
+                );
+                return of(null);
+              }),
+            );
+      }),
+    );
   }
 
   private fetchPlayersLifetimeStats$(accountIds: string[]): Observable<
@@ -93,21 +125,22 @@ export class LeaderboardService {
 
   private getAllMatchIdsFromPlayerSeason(season: PlayerSeason): string[] {
     return [
-      ...(season.data.relationships.matchesSolo?.data.map(
+      ...(season?.data?.relationships?.matchesSolo?.data?.map(
         (match) => match.id,
       ) ?? []),
-      ...(season.data.relationships.matchesSoloFPP?.data.map(
+      ...(season?.data?.relationships?.matchesSoloFPP?.data?.map(
         (match) => match.id,
       ) ?? []),
-      ...(season.data.relationships.matchesDuo?.data.map((match) => match.id) ??
-        []),
-      ...(season.data.relationships.matchesDuoFPP?.data.map(
+      ...(season?.data?.relationships?.matchesDuo?.data?.map(
         (match) => match.id,
       ) ?? []),
-      ...(season.data.relationships.matchesSquad?.data.map(
+      ...(season?.data?.relationships?.matchesDuoFPP?.data?.map(
         (match) => match.id,
       ) ?? []),
-      ...(season.data.relationships.matchesSquadFPP?.data.map(
+      ...(season?.data?.relationships?.matchesSquad?.data?.map(
+        (match) => match.id,
+      ) ?? []),
+      ...(season?.data?.relationships?.matchesSquadFPP?.data?.map(
         (match) => match.id,
       ) ?? []),
     ];
@@ -195,7 +228,7 @@ export class LeaderboardService {
           return of(cachedPlayers).pipe(
             tap(() =>
               Logger.debug(
-                'Cache hit, fetching from cache',
+                'CACHE HIT -- players -- fetching from cache...',
                 LeaderboardService.name,
               ),
             ),
@@ -218,7 +251,7 @@ export class LeaderboardService {
               map((response) => response.data.data),
               tap(async (data) => {
                 Logger.debug(
-                  'Cache miss, fetching from API',
+                  'CACHE MISS -- players -- fetching from API...',
                   LeaderboardService.name,
                 );
                 await this.cacheManager.set('players', data, 3600);
