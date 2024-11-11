@@ -9,9 +9,7 @@ export interface MatchResponseDto {
 
 type MatchIncludedDto = ParticipantDto | RosterDto;
 
-export interface ParticipantDto {
-  type: 'participant';
-  id: string;
+export interface ParticipantDto extends Entity<'participant'> {
   attributes?: {
     stats?: ParticipantStatsDto;
   };
@@ -55,10 +53,7 @@ interface RosterDto {
   };
   relationships: {
     participants: {
-      data: {
-        type: 'participant';
-        id: string;
-      }[];
+      data: Entity<'participant'>[];
     };
   };
 }
@@ -71,10 +66,7 @@ export interface PlayerDto {
   };
   relationships: {
     matches: {
-      data: {
-        type: 'match';
-        id: string;
-      }[];
+      data: Entity<'match'>[];
     };
   };
 }
@@ -95,6 +87,31 @@ export interface PlayerStatsDto {
   stats: Stats;
 }
 
+export interface PlayerSeason {
+  data: {
+    relationships: {
+      matchesSolo: {
+        data: Entity<'match'>[];
+      };
+      matchesSoloFPP: {
+        data: Entity<'match'>[];
+      };
+      matchesDuo: {
+        data: Entity<'match'>[];
+      };
+      matchesDuoFPP: {
+        data: Entity<'match'>[];
+      };
+      matchesSquad: {
+        data: Entity<'match'>[];
+      };
+      matchesSquadFPP: {
+        data: Entity<'match'>[];
+      };
+    };
+  };
+}
+
 export interface Stats {
   assists: number;
   damage: number;
@@ -111,4 +128,9 @@ export interface Stats {
   vehicleDestroys: number;
   walkDistance: number;
   weaponsAcquired: number;
+}
+
+interface Entity<T extends string> {
+  type: T;
+  id: string;
 }
