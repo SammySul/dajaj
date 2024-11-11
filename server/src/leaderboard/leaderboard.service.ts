@@ -22,6 +22,7 @@ import {
   MatchResponseDto,
   PlayerDto,
   PlayerResponseDto,
+  PlayerSeason,
   PlayerStatsDto,
 } from './leaderboard.model';
 
@@ -51,6 +52,67 @@ export class LeaderboardService {
     return playerName.every((name) => this.validPlayers.includes(name));
   }
 
+  private fetchPlayerLifetimeStats$(
+    accountId: string,
+  ): Observable<PlayerSeason> {
+    const url = `${PUBG_API_URL}/players/${accountId}/seasons/lifetime`;
+
+    return this.httpService
+      .get<PlayerSeason>(url, {
+        headers: {
+          Accept: PUBG_ACCEPT_HEADER,
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      })
+      .pipe(
+        map((response) => response.data),
+        catchError((error: AxiosError) => {
+          Logger.error(error.message, error.stack, LeaderboardService.name);
+          return of(null);
+        }),
+      );
+  }
+
+  private fetchPlayersLifetimeStats$(accountIds: string[]): Observable<
+    {
+      accountId: string;
+      stats: PlayerSeason;
+    }[]
+  > {
+    return zip(
+      accountIds.map((accountId) =>
+        this.fetchPlayerLifetimeStats$(accountId).pipe(
+          map((stats) => ({
+            accountId,
+            stats,
+          })),
+        ),
+      ),
+    );
+  }
+
+  private getAllMatchIdsFromPlayerSeason(season: PlayerSeason): string[] {
+    return [
+      ...(season.data.relationships.matchesSolo?.data.map(
+        (match) => match.id,
+      ) ?? []),
+      ...(season.data.relationships.matchesSoloFPP?.data.map(
+        (match) => match.id,
+      ) ?? []),
+      ...(season.data.relationships.matchesDuo?.data.map((match) => match.id) ??
+        []),
+      ...(season.data.relationships.matchesDuoFPP?.data.map(
+        (match) => match.id,
+      ) ?? []),
+      ...(season.data.relationships.matchesSquad?.data.map(
+        (match) => match.id,
+      ) ?? []),
+      ...(season.data.relationships.matchesSquadFPP?.data.map(
+        (match) => match.id,
+      ) ?? []),
+    ];
+  }
+
   private fetchPlayersWithMathes$(playerNames: string[]): Observable<
     {
       playerId: string;
@@ -61,11 +123,29 @@ export class LeaderboardService {
     return this.fetchPlayers$(playerNames).pipe(
       filter((players) => !!players),
       switchMap((players) => {
-        const playersWithMatchIds = players.map((player) => ({
-          playerId: player.id,
-          playerName: player.attributes.name,
-          matches: player.relationships.matches.data.map((match) => match.id),
-        }));
+        return this.fetchPlayersLifetimeStats$(
+          players.map((player) => player.id),
+        ).pipe(
+          map((playersStats) => {
+            return {
+              players,
+              playersStats,
+            };
+          }),
+        );
+      }),
+      switchMap((playersAndLifetimeStats) => {
+        const playersWithMatchIds = playersAndLifetimeStats.players.map(
+          (player) => ({
+            playerId: player.id,
+            playerName: player.attributes.name,
+            matches: this.getAllMatchIdsFromPlayerSeason(
+              playersAndLifetimeStats.playersStats.find(
+                (s) => s.accountId === player.id,
+              ).stats,
+            ),
+          }),
+        );
         return zip(
           playersWithMatchIds.map((player) => {
             return this.fetchMatches$(player.matches).pipe(
@@ -75,7 +155,7 @@ export class LeaderboardService {
                 matches: matches.filter((match) =>
                   this.doesMatchContainPlayers(
                     match,
-                    players.map((p) => p.id),
+                    playersAndLifetimeStats.players.map((p) => p.id),
                   ),
                 ),
               })),
@@ -126,34 +206,32 @@ export class LeaderboardService {
             ),
           );
         else {
-          {
-            return this.httpService
-              .get<PlayerResponseDto>(url, {
-                headers: {
-                  Accept: PUBG_ACCEPT_HEADER,
-                  Authorization: `Bearer ${this.apiKey}`,
-                },
-              })
-              .pipe(
-                filter((response) => !!response?.data?.data),
-                map((response) => response.data.data),
-                tap(async (data) => {
-                  Logger.debug(
-                    'Cache miss, fetching from API',
-                    LeaderboardService.name,
-                  );
-                  await this.cacheManager.set('players', data, 3600);
-                }),
-                catchError((error: AxiosError) => {
-                  Logger.error(
-                    error.message,
-                    error.stack,
-                    LeaderboardService.name,
-                  );
-                  return of(null);
-                }),
-              );
-          }
+          return this.httpService
+            .get<PlayerResponseDto>(url, {
+              headers: {
+                Accept: PUBG_ACCEPT_HEADER,
+                Authorization: `Bearer ${this.apiKey}`,
+              },
+            })
+            .pipe(
+              filter((response) => !!response?.data?.data),
+              map((response) => response.data.data),
+              tap(async (data) => {
+                Logger.debug(
+                  'Cache miss, fetching from API',
+                  LeaderboardService.name,
+                );
+                await this.cacheManager.set('players', data, 3600);
+              }),
+              catchError((error: AxiosError) => {
+                Logger.error(
+                  error.message,
+                  error.stack,
+                  LeaderboardService.name,
+                );
+                return of(null);
+              }),
+            );
         }
       }),
     );

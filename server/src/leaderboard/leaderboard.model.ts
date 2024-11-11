@@ -1,3 +1,28 @@
+// relavant for FE
+export interface PlayerStatsDto {
+  playerName: string;
+  stats: Stats;
+}
+
+export interface Stats {
+  assists: number;
+  damage: number;
+  headshotKills: number;
+  heals: number;
+  kills: number;
+  longestKill: number;
+  revives: number;
+  rideDistance: number;
+  roadKills: number;
+  swimDistance: number;
+  teamKills: number;
+  timeSurvived: number;
+  vehicleDestroys: number;
+  walkDistance: number;
+  weaponsAcquired: number;
+}
+//
+
 export interface PlayerResponseDto {
   data: PlayerDto[];
 }
@@ -37,7 +62,7 @@ export interface ParticipantStatsDto {
   vehicleDestroys: number;
   walkDistance: number;
   weaponsAcquired: number;
-  winPlace: number; // rank
+  winPlace: number;
 }
 
 interface RosterDto {
@@ -64,11 +89,6 @@ export interface PlayerDto {
   attributes: {
     name: string;
   };
-  relationships: {
-    matches: {
-      data: Entity<'match'>[];
-    };
-  };
 }
 
 interface MatchDto {
@@ -82,52 +102,29 @@ interface MatchDto {
   };
 }
 
-export interface PlayerStatsDto {
-  playerName: string;
-  stats: Stats;
-}
-
 export interface PlayerSeason {
   data: {
     relationships: {
-      matchesSolo: {
+      matchesSolo?: {
         data: Entity<'match'>[];
       };
-      matchesSoloFPP: {
+      matchesSoloFPP?: {
         data: Entity<'match'>[];
       };
-      matchesDuo: {
+      matchesDuo?: {
         data: Entity<'match'>[];
       };
-      matchesDuoFPP: {
+      matchesDuoFPP?: {
         data: Entity<'match'>[];
       };
-      matchesSquad: {
+      matchesSquad?: {
         data: Entity<'match'>[];
       };
-      matchesSquadFPP: {
+      matchesSquadFPP?: {
         data: Entity<'match'>[];
       };
     };
   };
-}
-
-export interface Stats {
-  assists: number;
-  damage: number;
-  headshotKills: number;
-  heals: number;
-  kills: number;
-  longestKill: number;
-  revives: number;
-  rideDistance: number;
-  roadKills: number;
-  swimDistance: number;
-  teamKills: number;
-  timeSurvived: number;
-  vehicleDestroys: number;
-  walkDistance: number;
-  weaponsAcquired: number;
 }
 
 interface Entity<T extends string> {
