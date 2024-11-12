@@ -1,3 +1,2 @@
-import { PlayerStatsDto, Stats } from '../leaderboard.model';
-
-export type Visualization = 'bar' | 'pie' | 'table';
+export const visualizations = ['Bar', 'Pie', 'Table'] as const;
+export type Visualization = (typeof visualizations)[number];

@@ -8,11 +8,11 @@ import { Visualization } from './visualiztions.model';
 @Component({
   template: `
     @if ($playerStats(); as playerStats) { @switch ($visualization()) { @case
-    ('table') {
+    ('Table') {
     <app-table [playerStats]="playerStats"></app-table>
-    } @case ('bar') {
+    } @case ('Bar') {
     <app-bar></app-bar>
-    } @case ('pie') {
+    } @case ('Pie') {
     <app-pie></app-pie>
     } } } @else {
     <span> No data to display. </span>
