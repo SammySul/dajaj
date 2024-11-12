@@ -11,7 +11,7 @@ import { Visualization } from './visualiztions.model';
     ('Table') {
     <app-table [playerStats]="playerStats"></app-table>
     } @case ('Bar') {
-    <app-bar></app-bar>
+    <app-bar [playerStats]="playerStats"></app-bar>
     } @case ('Pie') {
     <app-pie></app-pie>
     } } } @else {
