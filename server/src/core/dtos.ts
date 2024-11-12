@@ -1,4 +1,4 @@
-export interface ListRes<T> {
+export type ListRes<T> = {
   data: T[];
   count: number;
-}
+};

@@ -1,10 +1,10 @@
 // relavant for FE
-export interface PlayerStatsDto {
+export type PlayerStatsDto = {
   playerName: string;
   stats: Stats;
-}
+};
 
-export interface Stats {
+export type Stats = {
   assists: number;
   damage: number;
   headshotKills: number;
@@ -20,27 +20,27 @@ export interface Stats {
   vehicleDestroys: number;
   walkDistance: number;
   weaponsAcquired: number;
-}
+};
 //
 
-export interface PlayerResponseDto {
+export type PlayerResponseDto = {
   data: PlayerDto[];
-}
+};
 
-export interface MatchResponseDto {
+export type MatchResponseDto = {
   data: MatchDto;
   included: MatchIncludedDto[];
-}
+};
 
 type MatchIncludedDto = ParticipantDto | RosterDto;
 
-export interface ParticipantDto extends Entity<'participant'> {
+export type ParticipantDto = Entity<'participant'> & {
   attributes?: {
     stats?: ParticipantStatsDto;
   };
-}
+};
 
-export interface ParticipantStatsDto {
+export type ParticipantStatsDto = {
   assists: number;
   boosts: number;
   damageDealt: number;
@@ -63,9 +63,9 @@ export interface ParticipantStatsDto {
   walkDistance: number;
   weaponsAcquired: number;
   winPlace: number;
-}
+};
 
-interface RosterDto {
+type RosterDto = {
   type: 'roster';
   id: string;
   attributes: {
@@ -81,17 +81,17 @@ interface RosterDto {
       data: Entity<'participant'>[];
     };
   };
-}
+};
 
-export interface PlayerDto {
+export type PlayerDto = {
   type: 'player';
   id: string;
   attributes: {
     name: string;
   };
-}
+};
 
-interface MatchDto {
+type MatchDto = {
   type: 'match';
   id: string;
   attributes: {
@@ -100,9 +100,9 @@ interface MatchDto {
     mapName: string;
     duration: number;
   };
-}
+};
 
-export interface PlayerSeason {
+export type PlayerSeason = {
   data: {
     relationships: {
       matchesSolo?: {
@@ -125,9 +125,9 @@ export interface PlayerSeason {
       };
     };
   };
-}
+};
 
-interface Entity<T extends string> {
+type Entity<T extends string> = {
   type: T;
   id: string;
-}
+};

@@ -1,9 +1,9 @@
-export interface PlayerStatsDto {
+export type PlayerStatsDto = {
   playerName: string;
   stats: Stats;
-}
+};
 
-export interface Stats {
+export type Stats = {
   assists: number;
   damage: number;
   headshotKills: number;
@@ -19,4 +19,4 @@ export interface Stats {
   vehicleDestroys: number;
   walkDistance: number;
   weaponsAcquired: number;
-}
+};
