@@ -9,13 +9,6 @@ import { BaseChartDirective } from 'ng2-charts';
       </canvas>
     </div>
   `,
-  styles: `
-    .chart__container {
-      position: relative;
-      height: 80vh;
-      width: 80vw;
-    }
-  `,
   imports: [BaseChartDirective],
   selector: 'app-bar',
   standalone: true,

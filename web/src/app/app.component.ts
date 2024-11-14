@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { RouterOutlet } from '@angular/router';
 import { AppService } from './app.service';
-import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
   template: `
     <div class="container">
       @if (appService.$isLoading()) {
-      <mat-progress-bar mode="buffer"></mat-progress-bar>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       }
       <main>
         <router-outlet></router-outlet>
@@ -24,8 +24,10 @@ import { MatProgressBar } from '@angular/material/progress-bar';
   standalone: true,
   imports: [RouterOutlet, MatProgressBar],
 })
-export class AppComponent {
-  title = 'dajaj';
-
+export class AppComponent implements OnInit {
   protected readonly appService = inject(AppService);
+
+  ngOnInit(): void {
+    document.querySelector('.loader')?.remove();
+  }
 }

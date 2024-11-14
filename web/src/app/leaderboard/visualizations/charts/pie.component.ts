@@ -9,13 +9,6 @@ import { PlayerStatsDto, Stats } from '../../leaderboard.model';
       </canvas>
     </div>
   `,
-  styles: `
-    .chart__container {
-      position: relative;
-      height: 80vh;
-      width: 80vw;
-    }
-  `,
   imports: [BaseChartDirective],
   selector: 'app-pie',
   standalone: true,
@@ -30,7 +23,10 @@ export class PieComponent {
   protected readonly $datasets = computed(() => {
     const data = this.$playerStats();
     const players = data.map((player) => player.playerName);
-    const stats = Object.keys(data[0].stats).filter((stat) => stat === 'kills');
+    //todo: filter stat to show based on user selection
+    const stats = Object.keys(data.find((stat) => !!stat)?.stats ?? {}).filter(
+      (stat) => stat === 'kills',
+    );
 
     return {
       labels: players,
