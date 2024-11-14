@@ -13,7 +13,7 @@ import { Visualization } from './visualiztions.model';
     } @case ('Bar') {
     <app-bar [playerStats]="playerStats"></app-bar>
     } @case ('Pie') {
-    <app-pie></app-pie>
+    <app-pie [playerStats]="playerStats"></app-pie>
     } } } @else {
     <span> No data to display. </span>
     }

@@ -160,20 +160,20 @@ export class TableComponent {
 
   protected readonly displayedColumns = [
     'playerName',
-    'assists',
-    'damage',
-    'headshotKills',
-    'heals',
     'kills',
     'longestKill',
-    'revives',
-    'rideDistance',
+    'headshotKills',
     'roadKills',
-    'swimDistance',
     'teamKills',
-    'timeSurvived',
+    'assists',
+    'damage',
+    'revives',
+    'heals',
     'vehicleDestroys',
     'walkDistance',
+    'rideDistance',
+    'swimDistance',
+    'timeSurvived',
     'weaponsAcquired',
   ];
 }
