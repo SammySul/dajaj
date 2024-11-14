@@ -4,6 +4,8 @@ export type PlayerStatsDto = {
 };
 
 export type Stats = {
+  boosts: number;
+  knockouts: number;
   assists: number;
   damage: number;
   headshotKills: number;

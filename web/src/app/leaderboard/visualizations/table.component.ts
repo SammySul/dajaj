@@ -7,6 +7,14 @@ import { DecimalPipe } from '@angular/common';
 @Component({
   template: `
     <mat-table [dataSource]="$dataSource()" class="mat-elevation-z8" matSort>
+      <ng-container matColumnDef="boosts" sticky>
+        <mat-header-cell *matHeaderCellDef>Boosts</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.boosts }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="knockouts" sticky>
+        <mat-header-cell *matHeaderCellDef>KOs</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.knockouts }}</mat-cell>
+      </ng-container>
       <ng-container matColumnDef="playerName" sticky>
         <mat-header-cell *matHeaderCellDef>Player</mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element.playerName }}</mat-cell>
@@ -165,10 +173,12 @@ export class TableComponent {
     'headshotKills',
     'roadKills',
     'teamKills',
+    'knockouts',
     'assists',
     'damage',
     'revives',
     'heals',
+    'boosts',
     'vehicleDestroys',
     'walkDistance',
     'rideDistance',

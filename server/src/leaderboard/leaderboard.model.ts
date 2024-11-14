@@ -10,6 +10,8 @@ export type Stats = {
   headshotKills: number;
   heals: number;
   kills: number;
+  knockouts: number;
+  boosts: number;
   longestKill: number;
   revives: number;
   rideDistance: number;
@@ -41,6 +43,7 @@ export type ParticipantDto = Entity<'participant'> & {
 };
 
 export type ParticipantStatsDto = {
+  DBNOs: number;
   assists: number;
   boosts: number;
   damageDealt: number;

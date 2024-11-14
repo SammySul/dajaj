@@ -27,6 +27,8 @@ export class LeaderboardMapper {
     const stats: Stats = playerStatsFromMatches.reduce(
       (acc, curr) => {
         return {
+          boosts: acc.boosts + curr.boosts,
+          knockouts: acc.knockouts + curr.DBNOs,
           assists: acc.assists + curr.assists,
           damage: acc.damage + curr.damageDealt,
           headshotKills: acc.headshotKills + curr.headshotKills,
@@ -45,6 +47,8 @@ export class LeaderboardMapper {
         } as Stats;
       },
       {
+        boosts: 0,
+        knockouts: 0,
         assists: 0,
         damage: 0,
         headshotKills: 0,
