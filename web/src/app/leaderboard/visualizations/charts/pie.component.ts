@@ -1,16 +1,11 @@
 import { Component, computed, input } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
-import { PlayerStatsDto } from '../../leaderboard.model';
+import { PlayerStatsDto, Stats } from '../../leaderboard.model';
 
 @Component({
   template: `
     <div class="chart__container">
-      <canvas
-        baseChart
-        [options]="options"
-        [data]="$datasets()"
-        [type]="'doughnut'"
-      >
+      <canvas baseChart [options]="options" [data]="$datasets()" [type]="'pie'">
       </canvas>
     </div>
   `,
@@ -34,11 +29,22 @@ export class PieComponent {
 
   protected readonly $datasets = computed(() => {
     const data = this.$playerStats();
+    const players = data.map((player) => player.playerName);
+    const stats = Object.keys(data[0].stats).filter((stat) => stat === 'kills');
+
     return {
-      datasets: data.map((player) => ({
-        label: player.playerName,
-        data: { ...player.stats },
+      labels: players,
+      datasets: stats.map((stat) => ({
+        label: stat,
+        data: data.map((player) => player.stats[stat as keyof Stats]),
       })),
     };
+
+    // return {
+    //   datasets: data.map((player) => ({
+    //     label: player.playerName,
+    //     data: [player.stats.damage],
+    //   })),
+    // };
   });
 }
