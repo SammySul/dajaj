@@ -52,15 +52,6 @@ import {
     </div>
   `,
   styles: `
-    .config__container {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: start;
-      gap: 1rem;
-      margin: 1rem;
-    }
-
     .config__username-select {
       display: flex;
       justify-content: start;

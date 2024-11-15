@@ -56,3 +56,12 @@ body {
   height: 80vh;
   width: 80vw;
 }
+
+.config__container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: start;
+  gap: 1rem;
+  margin: 1rem;
+}
