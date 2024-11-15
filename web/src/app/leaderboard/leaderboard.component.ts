@@ -18,38 +18,43 @@ import {
   Visualization,
   visualizations,
 } from './visualizations/visualiztions.model';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   template: `
-    <div>
-      <div class="config__container">
-        <mat-form-field>
-          <mat-label>Visualization</mat-label>
-          <mat-select [formControl]="visualiztion">
-            @for (visualiztion of visualizations; track visualiztion) {
-            <mat-option [value]="visualiztion">{{ visualiztion }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <div class="config__username-select">
+    <ng-container *transloco="let t">
+      <div>
+        <div class="config__container">
           <mat-form-field>
-            <mat-label>Usernames</mat-label>
-            <mat-select [formControl]="usernames" multiple>
-              @for (username of $validUsernames(); track username) {
-              <mat-option [value]="username">{{ username }}</mat-option>
+            <mat-label>{{ t('visualization.label') }}</mat-label>
+            <mat-select [formControl]="visualiztion">
+              @for (vis of visualizations; track vis) {
+              <mat-option [value]="vis">{{
+                t('visualization.charts.' + vis)
+              }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
-          <button mat-icon-button (click)="onRefresh()">
-            <mat-icon>refresh</mat-icon>
-          </button>
+          <div class="config__username-select">
+            <mat-form-field>
+              <mat-label>{{ t('usernames.label') }}</mat-label>
+              <mat-select [formControl]="usernames" multiple>
+                @for (username of $validUsernames(); track username) {
+                <mat-option [value]="username">{{ username }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button mat-icon-button (click)="onRefresh()">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
         </div>
+        <app-visualizations
+          [visualization]="visualiztion.value!"
+          [playerStats]="$playerStats()"
+        ></app-visualizations>
       </div>
-      <app-visualizations
-        [visualization]="visualiztion.value!"
-        [playerStats]="$playerStats()"
-      ></app-visualizations>
-    </div>
+    </ng-container>
   `,
   styles: `
     .config__username-select {
@@ -66,6 +71,7 @@ import {
     ReactiveFormsModule,
     MatIcon,
     MatIconButton,
+    TranslocoDirective,
   ],
   providers: [LeaderboardService],
   selector: 'app-leaderboard',
@@ -82,7 +88,7 @@ export class LeaderboardComponent {
   );
 
   protected readonly usernames = new FormControl<string[]>([]);
-  protected readonly visualiztion = new FormControl<Visualization>('Table', {
+  protected readonly visualiztion = new FormControl<Visualization>('table', {
     validators: [Validators.required],
   });
 

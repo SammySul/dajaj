@@ -1,4 +1,3 @@
-import { TitleCasePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -18,36 +17,41 @@ import { startWith, tap } from 'rxjs';
 import { PlayerStatsDto, Stats } from '../../leaderboard.model';
 import { PieType, pieTypes } from '../visualiztions.model';
 import { VisualiztionsService } from '../visualiztions.service';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   template: `
-    <div class="config__container">
-      <mat-form-field>
-        <mat-label>Stat</mat-label>
-        <mat-select [formControl]="pieType">
-          @for (stat of $statList(); track stat) {
-          <mat-option [value]="stat.value">{{ stat.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Pie Type</mat-label>
-        <mat-select [formControl]="pie">
-          @for (pieType of pieTypes; track pieType) {
-          <mat-option [value]="pieType">{{ pieType | titlecase }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="chart__container">
-      <canvas
-        [options]="options"
-        baseChart
-        [data]="$datasets()"
-        [type]="pie.value ?? 'doughnut'"
-      >
-      </canvas>
-    </div>
+    <ng-container *transloco="let t">
+      <div class="config__container">
+        <mat-form-field>
+          <mat-label>{{ t('stat') }}</mat-label>
+          <mat-select [formControl]="pieType">
+            @for (stat of $statList(); track stat) {
+            <mat-option [value]="stat.value">{{ stat.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ t('visualization.charts.pieType') }}</mat-label>
+          <mat-select [formControl]="pie">
+            @for (pieType of pieTypes; track pieType) {
+            <mat-option [value]="pieType">{{
+              t('visualization.charts.' + pieType)
+            }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="chart__container">
+        <canvas
+          [options]="options"
+          baseChart
+          [data]="$datasets()"
+          [type]="pie.value ?? 'doughnut'"
+        >
+        </canvas>
+      </div>
+    </ng-container>
   `,
   imports: [
     BaseChartDirective,
@@ -55,7 +59,7 @@ import { VisualiztionsService } from '../visualiztions.service';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
-    TitleCasePipe,
+    TranslocoDirective,
   ],
   selector: 'app-pie',
   standalone: true,

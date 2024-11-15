@@ -1,34 +1,38 @@
 {
+    "title": "دجاج",
     "usernames": {
         "label": "أسماء المستخدمين"
     },
     "visualization": {
         "label": "تصوير بياني",
-        "table": "جدول",
         "charts": {
             "label": "الرسوم البيانية",
+            "table": "جدول",
             "pie": "دائري",
             "bar": "شريطي",
-            "doughnut": "دونات"
+            "doughnut": "دونات",
+            "pieType": "نوع الرسم الدائري"
         }
     },
+    "stat": "احصائية",
     "stats": {
-        "boosts": "المعززات",
-        "knockouts": "الإسقاطات",
-        "assists": "المساعدات",
-        "damage": "الضرر",
-        "headshotKills": "قتل بالطلقات الرأسية",
-        "heals": "العلاجات",
+        "playerName": "اسم اللاعب",
         "kills": "القتل",
+        "knockouts": "الإسقاطات",
+        "damage": "الضرر",
+        "assists": "المساعدات",
+        "headshotKills": "قتل بالطلقات الرأسية",
         "longestKill": "أطول مسافة قتل",
         "revives": "الإحياءات",
+        "boosts": "المعززات",
+        "heals": "العلاجات",
+        "weaponsAcquired": "الأسلحة المكتسبة",
+        "teamKills": "قتل الفريق",
         "rideDistance": "مسافة الركوب",
         "roadKills": "القتل بواسطة المركبات",
         "swimDistance": "مسافة السباحة",
-        "teamKills": "قتل الفريق",
         "timeSurvived": "الوقت الباقي على قيد الحياة",
         "vehicleDestroys": "تدمير المركبات",
-        "walkDistance": "مسافة المشي",
-        "weaponsAcquired": "الأسلحة المكتسبة"
+        "walkDistance": "مسافة المشي"
     }
 }

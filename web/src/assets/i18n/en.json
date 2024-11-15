@@ -1,35 +1,38 @@
 {
+    "title": "Dajaj",
     "usernames": {
         "label": "Usernames"
     },
     "visualization": {
         "label": "Visualization",
-        "table": "Table",
         "charts": {
             "label": "Charts",
+            "table": "Table",
             "pie": "Pie",
             "bar": "Bar",
-            "doughnut": "Doughnut"
+            "doughnut": "Doughnut",
+            "pieType": "Pie Type"
         }
     },
+    "stat": "Stat",
     "stats": {
         "playerName": "Player Name",
-        "boosts": "Boosts",
-        "knockouts": "KOs",
-        "assists": "Assists",
-        "damage": "Damage",
-        "headshotKills": "Headshot Kills",
-        "heals": "Heals",
         "kills": "Kills",
+        "knockouts": "KOs",
+        "damage": "Damage",
+        "assists": "Assists",
+        "headshotKills": "Headshot Kills",
         "longestKill": "Longest Kill",
         "revives": "Revives",
+        "boosts": "Boosts",
+        "heals": "Heals",
+        "weaponsAcquired": "Weapons Acquired",
+        "teamKills": "Team Kills",
         "rideDistance": "Ride Distance",
         "roadKills": "Road Kills",
         "swimDistance": "Swim Distance",
-        "teamKills": "Team Kills",
         "timeSurvived": "Time Survived",
         "vehicleDestroys": "Vehicle Destroys",
-        "walkDistance": "Walk Distance",
-        "weaponsAcquired": "Weapons Acquired"
+        "walkDistance": "Walk Distance"
     }
 }

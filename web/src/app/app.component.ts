@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { RouterOutlet } from '@angular/router';
 import { AppService } from './app.service';
+import { take } from 'rxjs';
 
 @Component({
   template: `
@@ -29,6 +30,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     document.querySelector('.loader')?.remove();
-    this.appService.initI18N();
+    this.appService.initI18N().pipe(take(1)).subscribe();
   }
 }
