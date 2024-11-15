@@ -40,7 +40,12 @@ import { VisualiztionsService } from '../visualiztions.service';
       </mat-form-field>
     </div>
     <div class="chart__container">
-      <canvas baseChart [data]="$datasets()" [type]="pie.value ?? 'doughnut'">
+      <canvas
+        [options]="options"
+        baseChart
+        [data]="$datasets()"
+        [type]="pie.value ?? 'doughnut'"
+      >
       </canvas>
     </div>
   `,
@@ -70,6 +75,15 @@ export class PieComponent implements OnInit {
   protected readonly $statList = computed(() =>
     this.visualizationsService.$statList(),
   );
+
+  protected readonly options = {
+    plugins: {
+      legend: {
+        display: true,
+        align: 'start' as any,
+      },
+    },
+  };
 
   protected readonly pieType = new FormControl<keyof Stats>('kills');
   protected readonly pieTypes = pieTypes;
@@ -108,6 +122,7 @@ export class PieComponent implements OnInit {
       labels: players,
       datasets: stats.map((stat) => ({
         label: this.$statList().find((s) => s.value === stat)?.label,
+        backgroundColor: this.visualizationsService.backgroundColors,
         data: playerStats.map(
           // NOTE: the + 0.00000000001 is a workaround for chart.js not rendering 0 values
           (player) => player.stats[stat as keyof Stats] + 0.00000000001,

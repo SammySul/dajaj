@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { PlayerStatsDto } from '../../leaderboard.model';
 import { BaseChartDirective } from 'ng2-charts';
 import { VisualiztionsService } from '../visualiztions.service';
@@ -22,13 +22,24 @@ export class BarComponent {
 
   protected readonly options = {
     maintainAspectRatio: false,
+    indexAxis: 'y' as any,
+    plugins: {
+      legend: {
+        display: true,
+        align: 'start' as any,
+      },
+    },
     scales: {
-      y: {
+      x: {
         beginAtZero: true,
         max: 100,
       },
     },
   };
+
+  private readonly backgroundColors = Array.from(
+    this.visualizationsService.backgroundColors,
+  );
 
   protected readonly $datasets = computed(() => {
     const data = this.$playerStats();
@@ -37,11 +48,12 @@ export class BarComponent {
     return {
       datasets: data.map((player) => ({
         label: player.playerName,
+        backgroundColor: this.backgroundColors.shift(),
         data: Object.entries(player.stats).map(([key, value]) => {
           const stat = statList.find((stat) => stat.value === key);
           return {
-            x: stat?.label ?? key,
-            y: value,
+            y: stat?.label ?? key,
+            x: value,
           };
         }),
       })),
