@@ -26,7 +26,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
         <mat-form-field>
           <mat-label>{{ t('stat') }}</mat-label>
           <mat-select [formControl]="pieType">
-            @for (stat of $statList(); track stat) {
+            @for (stat of $statList(); track stat.value) {
             <mat-option [value]="stat.value">{{ stat.label }}</mat-option>
             }
           </mat-select>

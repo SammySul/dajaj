@@ -8,7 +8,7 @@ import { VisualiztionsService } from './visualiztions.service';
 @Component({
   template: `
     <mat-table [dataSource]="$dataSource()" class="mat-elevation-z8" matSort>
-      @for(col of $playerAndStatList(); track col){
+      @for(col of $playerAndStatList(); track col.value){
       <ng-container matColumnDef="{{ col.value }}">
         <mat-header-cell *matHeaderCellDef mat-sort-header>{{
           col.label
