@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -33,7 +34,7 @@ import { VisualiztionsService } from '../visualiztions.service';
         <mat-label>Pie Type</mat-label>
         <mat-select [formControl]="pie">
           @for (pieType of pieTypes; track pieType) {
-          <mat-option [value]="pieType">{{ pieType }}</mat-option>
+          <mat-option [value]="pieType">{{ pieType | titlecase }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -49,6 +50,7 @@ import { VisualiztionsService } from '../visualiztions.service';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    TitleCasePipe,
   ],
   selector: 'app-pie',
   standalone: true,
