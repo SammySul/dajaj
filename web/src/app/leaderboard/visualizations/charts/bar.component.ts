@@ -50,7 +50,7 @@ export class BarComponent {
         label: player.playerName,
         backgroundColor: this.backgroundColors.shift(),
         data: Object.entries(player.stats).map(([key, value]) => {
-          const stat = statList.find((stat) => stat.value === key);
+          const stat = statList?.find((stat) => stat.value === key);
           return {
             y: stat?.label ?? key,
             x: value,

@@ -115,13 +115,13 @@ export class PieComponent implements OnInit {
   ) {
     const players = playerStats.map((player) => player.playerName);
     const stats = this.$playerAndStatList()
-      .map((s) => s.value)
+      ?.map((s) => s.value)
       .filter((stat) => stat === (selectedStat ?? 'kills'));
 
     this.$datasets.set({
       labels: players,
-      datasets: stats.map((stat) => ({
-        label: this.$statList().find((s) => s.value === stat)?.label,
+      datasets: stats?.map((stat) => ({
+        label: this.$statList()?.find((s) => s.value === stat)?.label,
         backgroundColor: this.visualizationsService.backgroundColors,
         data: playerStats.map(
           // NOTE: the + 0.00000000001 is a workaround for chart.js not rendering 0 values

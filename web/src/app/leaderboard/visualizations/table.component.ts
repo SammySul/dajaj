@@ -69,7 +69,7 @@ export class TableComponent {
   );
 
   protected readonly $displayedColumns = computed(() =>
-    this.visualizationsService.$playerAndStatList().map((v) => v.value),
+    this.visualizationsService.$playerAndStatList()?.map((v) => v.value),
   );
 
   protected format(stat: any): string | number {

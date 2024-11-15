@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 
 @Component({
   template: `
-    <div class="container">
+    <div>
       @if (appService.$isLoading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       }
@@ -29,5 +29,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     document.querySelector('.loader')?.remove();
+    this.appService.initI18N();
   }
 }

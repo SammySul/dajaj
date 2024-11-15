@@ -1,1 +1,35 @@
-{}
+{
+    "usernames": {
+        "label": "Usernames"
+    },
+    "visualization": {
+        "label": "Visualization",
+        "table": "Table",
+        "charts": {
+            "label": "Charts",
+            "pie": "Pie",
+            "bar": "Bar",
+            "doughnut": "Doughnut"
+        }
+    },
+    "stats": {
+        "playerName": "Player Name",
+        "boosts": "Boosts",
+        "knockouts": "KOs",
+        "assists": "Assists",
+        "damage": "Damage",
+        "headshotKills": "Headshot Kills",
+        "heals": "Heals",
+        "kills": "Kills",
+        "longestKill": "Longest Kill",
+        "revives": "Revives",
+        "rideDistance": "Ride Distance",
+        "roadKills": "Road Kills",
+        "swimDistance": "Swim Distance",
+        "teamKills": "Team Kills",
+        "timeSurvived": "Time Survived",
+        "vehicleDestroys": "Vehicle Destroys",
+        "walkDistance": "Walk Distance",
+        "weaponsAcquired": "Weapons Acquired"
+    }
+}

@@ -1,1 +1,34 @@
-{}
+{
+    "usernames": {
+        "label": "أسماء المستخدمين"
+    },
+    "visualization": {
+        "label": "تصوير بياني",
+        "table": "جدول",
+        "charts": {
+            "label": "الرسوم البيانية",
+            "pie": "دائري",
+            "bar": "شريطي",
+            "doughnut": "دونات"
+        }
+    },
+    "stats": {
+        "boosts": "المعززات",
+        "knockouts": "الإسقاطات",
+        "assists": "المساعدات",
+        "damage": "الضرر",
+        "headshotKills": "قتل بالطلقات الرأسية",
+        "heals": "العلاجات",
+        "kills": "القتل",
+        "longestKill": "أطول مسافة قتل",
+        "revives": "الإحياءات",
+        "rideDistance": "مسافة الركوب",
+        "roadKills": "القتل بواسطة المركبات",
+        "swimDistance": "مسافة السباحة",
+        "teamKills": "قتل الفريق",
+        "timeSurvived": "الوقت الباقي على قيد الحياة",
+        "vehicleDestroys": "تدمير المركبات",
+        "walkDistance": "مسافة المشي",
+        "weaponsAcquired": "الأسلحة المكتسبة"
+    }
+}
