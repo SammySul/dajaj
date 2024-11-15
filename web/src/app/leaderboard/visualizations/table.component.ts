@@ -1,131 +1,25 @@
-import { Component, computed, effect, input, viewChild } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { Component, computed, inject, input, viewChild } from '@angular/core';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { PlayerStatsDto } from '../leaderboard.model';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { DecimalPipe } from '@angular/common';
+import { VisualiztionsService } from './visualiztions.service';
 
 @Component({
   template: `
     <mat-table [dataSource]="$dataSource()" class="mat-elevation-z8" matSort>
-      <ng-container matColumnDef="boosts" sticky>
-        <mat-header-cell *matHeaderCellDef>Boosts</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.boosts }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="knockouts" sticky>
-        <mat-header-cell *matHeaderCellDef>KOs</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.knockouts }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="playerName" sticky>
-        <mat-header-cell *matHeaderCellDef>Player</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.playerName }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="assists">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Assists</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{ element.assists }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="damage">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Damage</mat-header-cell
-        >
+      @for(col of $playerAndStatList(); track col){
+      <ng-container matColumnDef="{{ col.value }}">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{
+          col.label
+        }}</mat-header-cell>
         <mat-cell *matCellDef="let element">{{
-          element.damage | number
+          format(element[col.value])
         }}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="headshotKills">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Headshot Kills</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{
-          element.headshotKills
-        }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="heals">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Heals</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{ element.heals }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="kills">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Kills</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{ element.kills }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="longestKill">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Longest Kill</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{
-          element.longestKill | number
-        }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="revives">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Revives</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{ element.revives }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="rideDistance">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Ride Distance</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{
-          element.rideDistance | number
-        }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="roadKills">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Road Kills</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{ element.roadKills }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="swimDistance">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Swim Distance</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{
-          element.swimDistance | number
-        }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="teamKills">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Team Kills</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{ element.teamKills }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="timeSurvived">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Time Survived</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">{{
-          element.timeSurvived
-        }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="vehicleDestroys">
-        <mat-header-cell *matHeaderCellDef mat-sort-header
-          >Vehicle Destroys</mat-header-cell
-        >
-        <mat-cell *matCellDef="let element">
-          {{ element.vehicleDestroys }}
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="walkDistance">
-        <mat-header-cell *matHeaderCellDef>Walk Distance</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{
-          element.walkDistance | number
-        }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="weaponsAcquired">
-        <mat-header-cell *matHeaderCellDef>Weapons Acquired</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          {{ element.weaponsAcquired }}
-        </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      }
+      <mat-header-row *matHeaderRowDef="$displayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: $displayedColumns()"></mat-row>
     </mat-table>
   `,
   styles: `
@@ -143,11 +37,15 @@ import { DecimalPipe } from '@angular/common';
       min-width: 100px;
     }
   `,
-  imports: [MatTableModule, MatSortModule, DecimalPipe],
+  imports: [MatTableModule, MatSortModule],
+  providers: [DecimalPipe],
   selector: 'app-table',
   standalone: true,
 })
 export class TableComponent {
+  private readonly visualizationsService = inject(VisualiztionsService);
+  private readonly decimalPipe = inject(DecimalPipe);
+
   readonly $playerStats = input.required<PlayerStatsDto[]>({
     alias: 'playerStats',
   });
@@ -166,24 +64,17 @@ export class TableComponent {
 
   private readonly $sort = viewChild(MatSort);
 
-  protected readonly displayedColumns = [
-    'playerName',
-    'kills',
-    'longestKill',
-    'headshotKills',
-    'roadKills',
-    'teamKills',
-    'knockouts',
-    'assists',
-    'damage',
-    'revives',
-    'heals',
-    'boosts',
-    'vehicleDestroys',
-    'walkDistance',
-    'rideDistance',
-    'swimDistance',
-    'timeSurvived',
-    'weaponsAcquired',
-  ];
+  protected readonly $playerAndStatList = computed(() =>
+    this.visualizationsService.$playerAndStatList(),
+  );
+
+  protected readonly $displayedColumns = computed(() =>
+    this.visualizationsService.$playerAndStatList().map((v) => v.value),
+  );
+
+  protected format(stat: any): string | number {
+    return typeof stat === 'number'
+      ? this.decimalPipe.transform(stat, '1.0-0') ?? stat
+      : stat;
+  }
 }

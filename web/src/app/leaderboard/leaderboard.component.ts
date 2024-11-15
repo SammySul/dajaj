@@ -73,7 +73,6 @@ import {
 })
 export class LeaderboardComponent {
   private readonly leaderboardService = inject(LeaderboardService);
-
   protected readonly visualizations = visualizations;
   protected readonly $playerStats = signal<PlayerStatsDto[]>([]);
   protected readonly $validUsernames = toSignal(

@@ -1,4 +1,4 @@
-export const visualizations = ['Bar', 'Pie', 'Table'] as const;
+export const visualizations = ['Table', 'Pie', 'Bar'] as const;
 export type Visualization = (typeof visualizations)[number];
 
 export const pieTypes = ['doughnut', 'pie'] as const;

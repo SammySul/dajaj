@@ -16,6 +16,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { startWith, tap } from 'rxjs';
 import { PlayerStatsDto, Stats } from '../../leaderboard.model';
 import { PieType, pieTypes } from '../visualiztions.model';
+import { VisualiztionsService } from '../visualiztions.service';
 
 @Component({
   template: `
@@ -24,7 +25,7 @@ import { PieType, pieTypes } from '../visualiztions.model';
         <mat-label>Stat</mat-label>
         <mat-select [formControl]="pieType">
           @for (stat of $statList(); track stat) {
-          <mat-option [value]="stat">{{ stat }}</mat-option>
+          <mat-option [value]="stat.value">{{ stat.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -38,12 +39,7 @@ import { PieType, pieTypes } from '../visualiztions.model';
       </mat-form-field>
     </div>
     <div class="chart__container">
-      <canvas
-        baseChart
-        [options]="options"
-        [data]="$datasets()"
-        [type]="pie.value ?? 'doughnut'"
-      >
+      <canvas baseChart [data]="$datasets()" [type]="pie.value ?? 'doughnut'">
       </canvas>
     </div>
   `,
@@ -58,22 +54,24 @@ import { PieType, pieTypes } from '../visualiztions.model';
   standalone: true,
 })
 export class PieComponent implements OnInit {
+  private readonly visualizationsService = inject(VisualiztionsService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly $playerStats = input.required<PlayerStatsDto[]>({
     alias: 'playerStats',
   });
 
+  protected readonly $playerAndStatList = computed(() =>
+    this.visualizationsService.$playerAndStatList(),
+  );
+
+  protected readonly $statList = computed(() =>
+    this.visualizationsService.$statList(),
+  );
+
   protected readonly pieType = new FormControl<keyof Stats>('kills');
   protected readonly pieTypes = pieTypes;
   protected readonly pie = new FormControl<PieType>('doughnut');
-
-  protected readonly $statList = computed(() => {
-    const statKeys = this.$playerStats().find((p) => !!p)?.stats;
-    return Object.keys(statKeys ?? {});
-  });
-
-  protected readonly options = {};
 
   protected readonly $datasets = signal<any>(null);
 
@@ -100,15 +98,18 @@ export class PieComponent implements OnInit {
     selectedStat?: keyof Stats | null,
   ) {
     const players = playerStats.map((player) => player.playerName);
-    const stats = Object.keys(
-      playerStats.find((stat) => !!stat)?.stats ?? {},
-    ).filter((stat) => stat === (selectedStat ?? 'kills'));
+    const stats = this.$playerAndStatList()
+      .map((s) => s.value)
+      .filter((stat) => stat === (selectedStat ?? 'kills'));
 
     this.$datasets.set({
       labels: players,
       datasets: stats.map((stat) => ({
-        label: stat,
-        data: playerStats.map((player) => player.stats[stat as keyof Stats]),
+        label: this.$statList().find((s) => s.value === stat)?.label,
+        data: playerStats.map(
+          // NOTE: the + 0.00000000001 is a workaround for chart.js not rendering 0 values
+          (player) => player.stats[stat as keyof Stats] + 0.00000000001,
+        ),
       })),
     });
   }
