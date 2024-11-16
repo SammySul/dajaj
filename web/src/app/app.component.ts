@@ -42,7 +42,7 @@ import { AppService } from './app.service';
     button {
       position: fixed;
       right: 1rem;
-      top: 1rem;
+      bottom: 1rem;
       z-index: 1000;
     }
 
@@ -50,7 +50,7 @@ import { AppService } from './app.service';
       width: 100px;
       position: fixed;
       right: 1rem;
-      top: 3rem;
+      bottom: 3rem;
       z-index: 1000;
       pointer-events: none;
       opacity: 0;

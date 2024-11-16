@@ -25,7 +25,12 @@ export class AppService {
       .pipe(
         filter((event) => event.type === 'langChanged'),
         switchMap(() => this.translocoService.selectTranslate('title')),
-        tap((title) => this.title.setTitle(title)),
+        tap((title) => {
+          this.title.setTitle(title);
+          document.dir = ['ar'].includes(this.translocoService.getActiveLang())
+            ? 'rtl'
+            : 'ltr';
+        }),
         takeUntilDestroyed(),
       )
       .subscribe();
