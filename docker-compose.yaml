@@ -3,7 +3,7 @@ version: "3"
 services:
   nest:
     image: mmayss/dajaj_server:master
-    container_name: nest
+    container_name: daja_server
     restart: unless-stopped
     env_file:
       - ./.env
@@ -12,9 +12,9 @@ services:
 
   web:
     image: mmayss/dajaj_web:master
-    container_name: web
+    container_name: dajaj_web
     restart: unless-stopped
     ports:
       - "127.0.0.1:4200:80"
     depends_on:
-      - nest
+      - daja_server
