@@ -6,7 +6,7 @@ import { TableComponent } from './table.component';
 import { Visualization } from './visualiztions.model';
 
 @Component({
-  template: `
+    template: `
     @if ($playerStats(); as playerStats) { @switch ($visualization()) { @case
     ('table') {
     <app-table [playerStats]="playerStats"></app-table>
@@ -18,9 +18,8 @@ import { Visualization } from './visualiztions.model';
     <span> No data to display. </span>
     }
   `,
-  imports: [TableComponent, BarComponent, PieComponent],
-  selector: 'app-visualizations',
-  standalone: true,
+    imports: [TableComponent, BarComponent, PieComponent],
+    selector: 'app-visualizations'
 })
 export class VisualizationsComponent {
   // TODO: we could just pass in the component instead.

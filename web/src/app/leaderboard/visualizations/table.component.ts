@@ -6,7 +6,7 @@ import { PlayerStatsDto } from '../leaderboard.model';
 import { VisualiztionsService } from './visualiztions.service';
 
 @Component({
-  template: `
+    template: `
     <mat-table [dataSource]="$dataSource()" class="mat-elevation-z8" matSort>
       @for(col of $playerAndStatList(); track col.value){
       <ng-container matColumnDef="{{ col.value }}">
@@ -22,7 +22,7 @@ import { VisualiztionsService } from './visualiztions.service';
       <mat-row *matRowDef="let row; columns: $displayedColumns()"></mat-row>
     </mat-table>
   `,
-  styles: `
+    styles: `
     .mat-column-playerName{
       border-right: 1px solid currentColor;
       padding-right: 100px;
@@ -37,10 +37,9 @@ import { VisualiztionsService } from './visualiztions.service';
       min-width: 100px;
     }
   `,
-  imports: [MatTableModule, MatSortModule],
-  providers: [DecimalPipe],
-  selector: 'app-table',
-  standalone: true,
+    imports: [MatTableModule, MatSortModule],
+    providers: [DecimalPipe],
+    selector: 'app-table'
 })
 export class TableComponent {
   private readonly visualizationsService = inject(VisualiztionsService);

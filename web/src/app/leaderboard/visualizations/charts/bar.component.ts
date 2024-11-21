@@ -4,15 +4,14 @@ import { BaseChartDirective } from 'ng2-charts';
 import { VisualiztionsService } from '../visualiztions.service';
 
 @Component({
-  template: `
+    template: `
     <div class="chart__container">
       <canvas baseChart [options]="options" [data]="$datasets()" [type]="'bar'">
       </canvas>
     </div>
   `,
-  imports: [BaseChartDirective],
-  selector: 'app-bar',
-  standalone: true,
+    imports: [BaseChartDirective],
+    selector: 'app-bar'
 })
 export class BarComponent {
   private readonly visualizationsService = inject(VisualiztionsService);

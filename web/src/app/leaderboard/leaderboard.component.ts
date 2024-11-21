@@ -21,7 +21,7 @@ import {
 import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
-  template: `
+    template: `
     <ng-container *transloco="let t">
       <div>
         <div class="config__container">
@@ -56,26 +56,25 @@ import { TranslocoDirective } from '@jsverse/transloco';
       </div>
     </ng-container>
   `,
-  styles: `
+    styles: `
     .config__username-select {
       display: flex;
       justify-content: start;
       align-items: center;
     }
   `,
-  imports: [
-    VisualizationsComponent,
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatIcon,
-    MatIconButton,
-    TranslocoDirective,
-  ],
-  providers: [LeaderboardService],
-  selector: 'app-leaderboard',
-  standalone: true,
+    imports: [
+        VisualizationsComponent,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatIcon,
+        MatIconButton,
+        TranslocoDirective,
+    ],
+    providers: [LeaderboardService],
+    selector: 'app-leaderboard'
 })
 export class LeaderboardComponent {
   private readonly leaderboardService = inject(LeaderboardService);

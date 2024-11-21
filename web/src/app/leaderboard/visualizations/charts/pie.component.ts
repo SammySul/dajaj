@@ -20,7 +20,7 @@ import { VisualiztionsService } from '../visualiztions.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
-  template: `
+    template: `
     <ng-container *transloco="let t">
       <div class="config__container">
         <mat-form-field>
@@ -53,16 +53,15 @@ import { TranslocoDirective } from '@jsverse/transloco';
       </div>
     </ng-container>
   `,
-  imports: [
-    BaseChartDirective,
-    MatFormFieldModule,
-    MatSelectModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TranslocoDirective,
-  ],
-  selector: 'app-pie',
-  standalone: true,
+    imports: [
+        BaseChartDirective,
+        MatFormFieldModule,
+        MatSelectModule,
+        FormsModule,
+        ReactiveFormsModule,
+        TranslocoDirective,
+    ],
+    selector: 'app-pie'
 })
 export class PieComponent implements OnInit {
   private readonly visualizationsService = inject(VisualiztionsService);
