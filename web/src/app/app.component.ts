@@ -9,7 +9,7 @@ import { LangDefinition, TranslocoService } from '@jsverse/transloco';
 import { AppService } from './app.service';
 
 @Component({
-    template: `
+  template: `
     <div>
       @if (appService.$isLoading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -22,7 +22,7 @@ import { AppService } from './app.service';
         (selectionChange)="changeLang($event.value)"
         [hideSingleSelectionIndicator]="true"
       >
-        @for(option of langs; track option){
+        @for (option of langs; track option) {
         <mat-option [value]="option.id">
           {{ option.label }}
         </mat-option>
@@ -33,7 +33,7 @@ import { AppService } from './app.service';
       </main>
     </div>
   `,
-    styles: `
+  styles: `
     main {
       display: flex;
       flex-direction: column;
@@ -56,15 +56,15 @@ import { AppService } from './app.service';
       opacity: 0;
     }
   `,
-    selector: 'app-root',
-    imports: [
-        RouterOutlet,
-        MatProgressBar,
-        MatIcon,
-        MatMiniFabButton,
-        MatSelect,
-        MatOption,
-    ]
+  selector: 'app-root',
+  imports: [
+    RouterOutlet,
+    MatProgressBar,
+    MatIcon,
+    MatMiniFabButton,
+    MatSelect,
+    MatOption,
+  ],
 })
 export class AppComponent implements OnInit {
   protected readonly appService = inject(AppService);

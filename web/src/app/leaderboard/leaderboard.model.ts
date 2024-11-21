@@ -22,3 +22,11 @@ export type Stats = {
   walkDistance: number;
   weaponsAcquired: number;
 };
+
+export type PlayerMatchStatsDto = {
+  playerName: string;
+  matches: {
+    createdAt: string;
+    stats: Stats;
+  }[];
+};

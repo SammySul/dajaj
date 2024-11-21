@@ -21,11 +21,13 @@ import { LeaderboardMapper } from './leaderboard.mapper';
 import {
   MatchResponseDto,
   PlayerDto,
+  PlayerMatchStatsDto,
   PlayerResponseDto,
   PlayerSeason,
   PlayerStatsDto,
 } from './leaderboard.model';
 
+// todo: make caching logic more generic (not retarded)
 @Injectable()
 export class LeaderboardService {
   private readonly apiKey =
@@ -41,6 +43,14 @@ export class LeaderboardService {
   fetchLeaderboard$(playerNames: string[]): Observable<PlayerStatsDto[]> {
     return this.fetchPlayersWithMathes$(playerNames).pipe(
       map((players) => players.map(LeaderboardMapper.toLeaderboardDto)),
+    );
+  }
+
+  fetchPlayerMatchStats$(
+    playerNames: string[],
+  ): Observable<PlayerMatchStatsDto[]> {
+    return this.fetchPlayersWithMathes$(playerNames).pipe(
+      map((players) => players.map(LeaderboardMapper.toPlayerMatchStatsDto)),
     );
   }
 
@@ -63,7 +73,7 @@ export class LeaderboardService {
       switchMap((cachedStats) => {
         if (!!cachedStats) {
           Logger.debug(
-            'CACHE HIT -- player lifetime season stats -- fetching from cache...',
+            `[CACHE HIT] players.${accountId}.seasons.lifetime -- [fetching from cache]`,
             LeaderboardService.name,
           );
           return of(cachedStats);
@@ -83,13 +93,13 @@ export class LeaderboardService {
               map((response) => response.data),
               tap(async (data) => {
                 Logger.debug(
-                  'CACHE MISS -- player lifetime season stats -- fetching from API...',
+                  `[CACHE MISS] players.${accountId}.seasons.lifetime [fetching from API]`,
                   LeaderboardService.name,
                 );
                 await this.cacheManager.set(
                   `players.${accountId}.seasons.lifetime`,
                   data,
-                  3600,
+                  3600 * 1000,
                 );
               }),
               catchError((error: AxiosError) => {
@@ -228,7 +238,7 @@ export class LeaderboardService {
           return of(cachedPlayers).pipe(
             tap(() =>
               Logger.debug(
-                'CACHE HIT -- players -- fetching from cache...',
+                '[CACHE HIT] players [fetching from cache]',
                 LeaderboardService.name,
               ),
             ),
@@ -251,10 +261,10 @@ export class LeaderboardService {
               map((response) => response.data.data),
               tap(async (data) => {
                 Logger.debug(
-                  'CACHE MISS -- players -- fetching from API...',
+                  '[CACHE MISS] players [fetching from API]',
                   LeaderboardService.name,
                 );
-                await this.cacheManager.set('players', data, 3600);
+                await this.cacheManager.set('players', data, 3600 * 1000);
               }),
               catchError((error: AxiosError) => {
                 Logger.error(
@@ -281,19 +291,48 @@ export class LeaderboardService {
   private fetchMatch$(matchId: string): Observable<MatchResponseDto | null> {
     const url = `${PUBG_API_URL}/matches/${matchId}`;
 
-    return this.httpService
-      .get<MatchResponseDto>(url, {
-        headers: {
-          Accept: PUBG_ACCEPT_HEADER,
-        },
-      })
-      .pipe(
-        map((response) => response.data),
-        catchError((error: AxiosError) => {
-          Logger.error(error.message, error.stack, LeaderboardService.name);
-          return of(null);
-        }),
-      );
+    return from(
+      this.cacheManager.get<MatchResponseDto>(`matches.${matchId}`),
+    ).pipe(
+      switchMap((cachedMatch) => {
+        if (!!cachedMatch) {
+          Logger.debug(
+            `[CACHE HIT] matches.${matchId} [fetching from cache]`,
+            LeaderboardService.name,
+          );
+          return of(cachedMatch);
+        } else
+          return this.httpService
+            .get<MatchResponseDto>(url, {
+              headers: {
+                Accept: PUBG_ACCEPT_HEADER,
+              },
+            })
+            .pipe(
+              filter((response) => !!response?.data?.data),
+              map((response) => response.data),
+              tap(async (data) => {
+                Logger.debug(
+                  `[CACHE MISS] matches.${matchId} [fetching from API]`,
+                  LeaderboardService.name,
+                );
+                await this.cacheManager.set(
+                  `matches.${matchId}`,
+                  data,
+                  3600 * 1000,
+                );
+              }),
+              catchError((error: AxiosError) => {
+                Logger.error(
+                  error.message,
+                  error.stack,
+                  LeaderboardService.name,
+                );
+                return of(null);
+              }),
+            );
+      }),
+    );
   }
 
   private getAvailablePlayers(): string[] {

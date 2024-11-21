@@ -1,4 +1,5 @@
 // relavant for FE
+
 export type PlayerStatsDto = {
   playerName: string;
   stats: Stats;
@@ -23,6 +24,15 @@ export type Stats = {
   walkDistance: number;
   weaponsAcquired: number;
 };
+
+export type PlayerMatchStatsDto = {
+  playerName: string;
+  matches: {
+    createdAt: string;
+    stats: Stats;
+  }[];
+};
+
 //
 
 export type PlayerResponseDto = {

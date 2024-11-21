@@ -3,9 +3,58 @@ import {
   Stats,
   MatchResponseDto,
   ParticipantDto,
+  PlayerMatchStatsDto,
 } from './leaderboard.model';
 
 export class LeaderboardMapper {
+  static toPlayerMatchStatsDto(data: {
+    playerId: string;
+    playerName: string;
+    matches: MatchResponseDto[];
+  }): PlayerMatchStatsDto {
+    const playerStatsFromMatches = data.matches.flatMap((match) => {
+      const playerStats = match.included.filter(
+        (included): included is ParticipantDto => {
+          return (
+            included.type === 'participant' &&
+            included.attributes.stats.playerId === data.playerId
+          );
+        },
+      );
+
+      return playerStats.map((playerStat) => ({
+        stats: playerStat.attributes.stats,
+        createdAt: match.data.attributes.createdAt,
+      }));
+    });
+
+    return {
+      playerName: data.playerName,
+      matches: playerStatsFromMatches.map((playerStat) => ({
+        createdAt: playerStat.createdAt,
+        stats: {
+          boosts: playerStat.stats.boosts,
+          knockouts: playerStat.stats.DBNOs,
+          assists: playerStat.stats.assists,
+          damage: playerStat.stats.damageDealt,
+          headshotKills: playerStat.stats.headshotKills,
+          heals: playerStat.stats.heals,
+          kills: playerStat.stats.kills,
+          longestKill: playerStat.stats.longestKill,
+          revives: playerStat.stats.revives,
+          rideDistance: playerStat.stats.rideDistance,
+          roadKills: playerStat.stats.roadKills,
+          swimDistance: playerStat.stats.swimDistance,
+          teamKills: playerStat.stats.teamKills,
+          timeSurvived: playerStat.stats.timeSurvived,
+          vehicleDestroys: playerStat.stats.vehicleDestroys,
+          walkDistance: playerStat.stats.walkDistance,
+          weaponsAcquired: playerStat.stats.weaponsAcquired,
+        },
+      })),
+    };
+  }
+
   static toLeaderboardDto(data: {
     playerId: string;
     playerName: string;
