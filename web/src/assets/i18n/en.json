@@ -8,6 +8,7 @@
         "charts": {
             "label": "Charts",
             "table": "Table",
+            "line": "Line",
             "pie": "Pie",
             "bar": "Bar",
             "doughnut": "Doughnut",

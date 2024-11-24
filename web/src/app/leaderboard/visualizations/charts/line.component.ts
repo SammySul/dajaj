@@ -5,19 +5,18 @@ import {
   effect,
   inject,
   input,
-  OnInit,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PlayerMatchStatsDto, Stats } from '../../leaderboard.model';
+import { VisualiztionsService } from '../visualiztions.service';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { BaseChartDirective } from 'ng2-charts';
 import { startWith, tap } from 'rxjs';
-import { PlayerStatsDto, Stats } from '../../leaderboard.model';
-import { PieType, pieTypes } from '../visualiztions.model';
-import { VisualiztionsService } from '../visualiztions.service';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
 
 @Component({
   template: `
@@ -31,28 +30,24 @@ import { TranslocoDirective } from '@jsverse/transloco';
             }
           </mat-select>
         </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ t('visualization.charts.pieType') }}</mat-label>
-          <mat-select [formControl]="pie">
-            @for (pieType of pieTypes; track pieType) {
-            <mat-option [value]="pieType">{{
-              t('visualization.charts.' + pieType)
-            }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
       </div>
       <div class="chart__container">
         <canvas
-          [options]="options"
           baseChart
+          [options]="options"
           [data]="$datasets()"
-          [type]="pie.value ?? 'doughnut'"
+          [type]="'line'"
         >
         </canvas>
       </div>
     </ng-container>
   `,
+  styles: `
+    .chart__container {
+      height: 75vh;
+    }
+  `,
+  providers: [DatePipe],
   imports: [
     BaseChartDirective,
     MatFormFieldModule,
@@ -61,14 +56,15 @@ import { TranslocoDirective } from '@jsverse/transloco';
     ReactiveFormsModule,
     TranslocoDirective,
   ],
-  selector: 'app-pie',
+  selector: 'app-line',
 })
-export class PieComponent implements OnInit {
+export class LineComponent {
   private readonly visualizationsService = inject(VisualiztionsService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly datePipe = inject(DatePipe);
 
-  readonly $playerStats = input.required<PlayerStatsDto[]>({
-    alias: 'playerStats',
+  readonly $playerMatchStats = input.required<PlayerMatchStatsDto[]>({
+    alias: 'playerMatchStats',
   });
 
   protected readonly $playerAndStatList = computed(() =>
@@ -79,7 +75,12 @@ export class PieComponent implements OnInit {
     this.visualizationsService.$statList(),
   );
 
+  protected readonly selectedStat = new FormControl<keyof Stats>('kills');
+
+  protected readonly $datasets = signal<any>(null);
+
   protected readonly options = {
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,
@@ -88,15 +89,11 @@ export class PieComponent implements OnInit {
     },
   };
 
-  protected readonly selectedStat = new FormControl<keyof Stats>('kills');
-  protected readonly pieTypes = pieTypes;
-  protected readonly pie = new FormControl<PieType>('doughnut');
-
-  protected readonly $datasets = signal<any>(null);
+  private readonly colors = this.visualizationsService.backgroundColors;
 
   constructor() {
     effect(() =>
-      this.setDatasets(this.$playerStats(), this.selectedStat.value),
+      this.setDatasets(this.$playerMatchStats(), this.selectedStat.value),
     );
   }
 
@@ -105,7 +102,7 @@ export class PieComponent implements OnInit {
       .pipe(
         startWith(this.selectedStat.value),
         tap((selectedStat) =>
-          this.setDatasets(this.$playerStats(), selectedStat),
+          this.setDatasets(this.$playerMatchStats(), selectedStat),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -113,23 +110,27 @@ export class PieComponent implements OnInit {
   }
 
   private setDatasets(
-    playerStats: PlayerStatsDto[],
+    playerStats: PlayerMatchStatsDto[],
     selectedStat?: keyof Stats | null,
   ) {
     const players = playerStats.map((player) => player.playerName);
-    const stats = this.$playerAndStatList()
-      ?.map((s) => s.value)
-      .filter((stat) => stat === (selectedStat ?? 'kills'));
+    const playerMatchDates = playerStats
+      .find((player) => !!player.matches)
+      ?.matches.map(
+        (match) => this.datePipe.transform(match.createdAt, 'medium') ?? '',
+      );
 
     this.$datasets.set({
-      labels: players,
-      datasets: stats?.map((stat) => ({
-        label: this.$statList()?.find((s) => s.value === stat)?.label,
-        backgroundColor: this.visualizationsService.backgroundColors,
-        data: playerStats.map(
-          // NOTE: the + 0.00000000001 is a workaround for chart.js not rendering 0 values
-          (player) => player.stats[stat as keyof Stats] + 0.00000000001,
-        ),
+      labels: playerMatchDates,
+      datasets: players.map((player) => ({
+        label: player,
+        backgroundColor: this.colors[players.indexOf(player)],
+        fill: true,
+        tension: 0.4,
+        data:
+          playerStats
+            .find((p) => p.playerName === player)
+            ?.matches.map((m) => m.stats[selectedStat ?? 'kills']) ?? [],
       })),
     });
   }

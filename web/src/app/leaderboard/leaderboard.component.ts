@@ -10,8 +10,16 @@ import { MatIconButton } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { filter, Observable, switchMap, take, tap } from 'rxjs';
-import { PlayerStatsDto } from './leaderboard.model';
+import {
+  combineLatest,
+  filter,
+  forkJoin,
+  Observable,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
+import { PlayerMatchStatsDto, PlayerStatsDto } from './leaderboard.model';
 import { LeaderboardService } from './leaderboard.service';
 import { VisualizationsComponent } from './visualizations/visualizations.component';
 import {
@@ -21,7 +29,7 @@ import {
 import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
-    template: `
+  template: `
     <ng-container *transloco="let t">
       <div>
         <div class="config__container">
@@ -52,34 +60,36 @@ import { TranslocoDirective } from '@jsverse/transloco';
         <app-visualizations
           [visualization]="visualiztion.value!"
           [playerStats]="$playerStats()"
+          [playerMatchStats]="$playerMatchStats()"
         ></app-visualizations>
       </div>
     </ng-container>
   `,
-    styles: `
+  styles: `
     .config__username-select {
       display: flex;
       justify-content: start;
       align-items: center;
     }
   `,
-    imports: [
-        VisualizationsComponent,
-        MatFormFieldModule,
-        MatSelectModule,
-        FormsModule,
-        ReactiveFormsModule,
-        MatIcon,
-        MatIconButton,
-        TranslocoDirective,
-    ],
-    providers: [LeaderboardService],
-    selector: 'app-leaderboard'
+  imports: [
+    VisualizationsComponent,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatIcon,
+    MatIconButton,
+    TranslocoDirective,
+  ],
+  providers: [LeaderboardService],
+  selector: 'app-leaderboard',
 })
 export class LeaderboardComponent {
   private readonly leaderboardService = inject(LeaderboardService);
   protected readonly visualizations = visualizations;
   protected readonly $playerStats = signal<PlayerStatsDto[]>([]);
+  protected readonly $playerMatchStats = signal<PlayerMatchStatsDto[]>([]);
   protected readonly $validUsernames = toSignal(
     this.leaderboardService
       .getValidPlayers$()
@@ -95,14 +105,34 @@ export class LeaderboardComponent {
     this.usernames.valueChanges
       .pipe(
         filter((usernames) => !!usernames),
-        switchMap((usernames) => this.getPlayerStats$(usernames, false)),
+        switchMap((usernames) => {
+          return forkJoin([
+            this.getPlayerStats$(usernames, false),
+            this.getPlayerMatchStats$(usernames, false),
+          ]);
+        }),
         takeUntilDestroyed(),
       )
       .subscribe();
   }
 
   protected onRefresh(): void {
-    this.getPlayerStats$(this.usernames.value ?? [], true).subscribe();
+    combineLatest([
+      this.getPlayerStats$(this.usernames.value ?? [], true),
+      this.getPlayerMatchStats$(this.usernames.value ?? [], true),
+    ]).subscribe();
+  }
+
+  protected getPlayerMatchStats$(
+    usernames: string[],
+    doRefresh = false,
+  ): Observable<PlayerMatchStatsDto[]> {
+    return this.leaderboardService
+      .getPlayersMatchStats$(usernames, doRefresh)
+      .pipe(
+        tap((playerMatchStats) => this.$playerMatchStats.set(playerMatchStats)),
+        take(1),
+      );
   }
 
   protected getPlayerStats$(
