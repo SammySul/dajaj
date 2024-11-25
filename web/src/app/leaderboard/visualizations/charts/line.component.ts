@@ -32,19 +32,26 @@ import { DatePipe } from '@angular/common';
         </mat-form-field>
       </div>
       <div class="chart__container">
-        <canvas
-          baseChart
-          [options]="options"
-          [data]="$datasets()"
-          [type]="'line'"
-        >
-        </canvas>
+        <div class="canvas__container">
+          <canvas
+            baseChart
+            [options]="options"
+            [data]="$datasets()"
+            [type]="'line'"
+          >
+          </canvas>
+        </div>
       </div>
     </ng-container>
   `,
-  styles: `
+  styles: ` 
+    .canvas__container {
+      min-width: min-content;
+      height: 100%;
+    }
+
     .chart__container {
-      height: 75vh;
+      overflow-x: auto;
     }
   `,
   providers: [DatePipe],
@@ -81,6 +88,7 @@ export class LineComponent {
 
   protected readonly options = {
     maintainAspectRatio: false,
+    responsive: true,
     plugins: {
       legend: {
         display: true,
@@ -114,11 +122,13 @@ export class LineComponent {
     selectedStat?: keyof Stats | null,
   ) {
     const players = playerStats.map((player) => player.playerName);
-    const playerMatchDates = playerStats
-      .find((player) => !!player.matches)
-      ?.matches.map(
-        (match) => this.datePipe.transform(match.createdAt, 'medium') ?? '',
-      );
+    const playerMatchDates =
+      playerStats
+        .find((player) => !!player.matches)
+        ?.matches.map(
+          (match) => this.datePipe.transform(match.createdAt, 'medium') ?? '',
+        )
+        .sort((a, b) => new Date(a).getTime() - new Date(b).getTime()) ?? [];
 
     this.$datasets.set({
       labels: playerMatchDates,
@@ -130,7 +140,12 @@ export class LineComponent {
         data:
           playerStats
             .find((p) => p.playerName === player)
-            ?.matches.map((m) => m.stats[selectedStat ?? 'kills']) ?? [],
+            ?.matches.sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime(),
+            )
+            .map((m) => m.stats[selectedStat ?? 'kills']) ?? [],
       })),
     });
   }

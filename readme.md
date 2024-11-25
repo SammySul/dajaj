@@ -1,6 +1,6 @@
 # dajaj - دجاج
 
-An app that tracks PUBG stats for you and your friends from matches played together (30 recent matches), presenting the combined stats in tables or charts for easy comparison.
+An app that tracks PUBG stats for you and your friends from matches played together recently, presenting the combined stats in tables or charts for easy comparison.
 
 ## Screenshots
 

@@ -16,7 +16,11 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { PUBG_ACCEPT_HEADER, PUBG_API_URL } from './leaderboard.consts';
+import {
+  MS_TIME,
+  PUBG_ACCEPT_HEADER,
+  PUBG_API_URL,
+} from './leaderboard.consts';
 import { LeaderboardMapper } from './leaderboard.mapper';
 import {
   MatchResponseDto,
@@ -42,7 +46,15 @@ export class LeaderboardService {
 
   fetchLeaderboard$(playerNames: string[]): Observable<PlayerStatsDto[]> {
     return this.fetchPlayersWithMathes$(playerNames).pipe(
-      map((players) => players.map(LeaderboardMapper.toLeaderboardDto)),
+      map((players) =>
+        players.map((player) =>
+          LeaderboardMapper.toLeaderboardDto(
+            player.playerId,
+            player.playerName,
+            Array.from(new Set(...players.map((player) => player.matches))),
+          ),
+        ),
+      ),
     );
   }
 
@@ -50,7 +62,15 @@ export class LeaderboardService {
     playerNames: string[],
   ): Observable<PlayerMatchStatsDto[]> {
     return this.fetchPlayersWithMathes$(playerNames).pipe(
-      map((players) => players.map(LeaderboardMapper.toPlayerMatchStatsDto)),
+      map((players) =>
+        players.map((player) =>
+          LeaderboardMapper.toPlayerMatchStatsDto(
+            player.playerId,
+            player.playerName,
+            Array.from(new Set(...players.map((player) => player.matches))),
+          ),
+        ),
+      ),
     );
   }
 
@@ -99,7 +119,7 @@ export class LeaderboardService {
                 await this.cacheManager.set(
                   `players.${accountId}.seasons.lifetime`,
                   data,
-                  3600 * 1000,
+                  MS_TIME.MINUTE * 20,
                 );
               }),
               catchError((error: AxiosError) => {
@@ -264,7 +284,7 @@ export class LeaderboardService {
                   '[CACHE MISS] players [fetching from API]',
                   LeaderboardService.name,
                 );
-                await this.cacheManager.set('players', data, 3600 * 1000);
+                await this.cacheManager.set('players', data, MS_TIME.WEEK * 10);
               }),
               catchError((error: AxiosError) => {
                 Logger.error(
@@ -319,7 +339,7 @@ export class LeaderboardService {
                 await this.cacheManager.set(
                   `matches.${matchId}`,
                   data,
-                  3600 * 1000,
+                  MS_TIME.WEEK * 10,
                 );
               }),
               catchError((error: AxiosError) => {

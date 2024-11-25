@@ -7,17 +7,17 @@ import {
 } from './leaderboard.model';
 
 export class LeaderboardMapper {
-  static toPlayerMatchStatsDto(data: {
-    playerId: string;
-    playerName: string;
-    matches: MatchResponseDto[];
-  }): PlayerMatchStatsDto {
-    const playerStatsFromMatches = data.matches.flatMap((match) => {
+  static toPlayerMatchStatsDto(
+    playerId: string,
+    playerName: string,
+    matches: MatchResponseDto[],
+  ): PlayerMatchStatsDto {
+    const playerStatsFromMatches = matches.flatMap((match) => {
       const playerStats = match.included.filter(
         (included): included is ParticipantDto => {
           return (
             included.type === 'participant' &&
-            included.attributes.stats.playerId === data.playerId
+            included.attributes.stats.playerId === playerId
           );
         },
       );
@@ -29,7 +29,7 @@ export class LeaderboardMapper {
     });
 
     return {
-      playerName: data.playerName,
+      playerName: playerName,
       matches: playerStatsFromMatches.map((playerStat) => ({
         createdAt: playerStat.createdAt,
         stats: {
@@ -55,17 +55,17 @@ export class LeaderboardMapper {
     };
   }
 
-  static toLeaderboardDto(data: {
-    playerId: string;
-    playerName: string;
-    matches: MatchResponseDto[];
-  }): PlayerStatsDto {
-    const playerStatsFromMatches = data.matches.flatMap((match) => {
+  static toLeaderboardDto(
+    playerId: string,
+    playerName: string,
+    matches: MatchResponseDto[],
+  ): PlayerStatsDto {
+    const playerStatsFromMatches = matches.flatMap((match) => {
       const playerStats = match.included.filter(
         (included): included is ParticipantDto => {
           return (
             included.type === 'participant' &&
-            included.attributes.stats.playerId === data.playerId
+            included.attributes.stats.playerId === playerId
           );
         },
       );
@@ -116,7 +116,7 @@ export class LeaderboardMapper {
       },
     );
     return {
-      playerName: data.playerName,
+      playerName,
       stats,
     };
   }
