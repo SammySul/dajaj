@@ -55,6 +55,14 @@ import { AppService } from './app.service';
       pointer-events: none;
       opacity: 0;
     }
+
+    mat-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
   `,
   selector: 'app-root',
   imports: [
